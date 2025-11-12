@@ -1,62 +1,263 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Criar Curso — AprenderMais</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AprenderMais — Criar Curso</title>
   <style>
-    body {margin:0; font-family:Poppins, sans-serif; background:#f4f6f8; color:#222;}
-    header {background:#0052cc; color:#fff; padding:15px; text-align:center; font-size:1.5em;}
-    .container {max-width:600px; margin:30px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-    input, textarea {width:100%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #ccc;}
-    button {background:#0052cc; color:#fff; border:none; padding:12px 20px; border-radius:8px; cursor:pointer;}
-    button:hover {background:#003d99;}
-    footer {text-align:center; padding:15px; background:#eee; font-size:0.9em; margin-top:40px;}
+    :root{--bg:#071226;--card:#061424;--accent:#4f46e5;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#071022,#061218);padding-bottom:80px}
+    header{background:transparent;padding:18px 20px;position:sticky;top:0;backdrop-filter:blur(6px);z-index:30}
+    .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+    .logo{background:linear-gradient(135deg,#06b6d4,var(--accent));padding:10px;border-radius:8px;font-weight:800}
+    .container{max-width:900px;margin:26px auto;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+    h1{margin:0 0 8px}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    label{display:block;margin-top:10px;font-size:13px;color:var(--muted)}
+    input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+    textarea{min-height:120px;resize:vertical}
+    .thumb-preview{height:180px;border-radius:10px;background:#081226;border:1px dashed rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .btn{background:var(--accent);border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+    .small{font-size:13px;color:var(--muted);margin-top:8px}
+    .my-courses{margin-top:18px}
+    .course-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);margin-bottom:8px}
+    .course-row img{width:64px;height:48px;object-fit:cover;border-radius:6px}
+    .note{font-size:13px;color:var(--muted)}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <header>➕ Criar Novo Curso</header>
+<header><div class="nav" style="max-width:1100px;margin:0 auto"><div class="logo">AprenderMais</div><div style="margin-left:auto"><a href="index.html" class="btn btn-ghost" style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px">Voltar</a></div></div></header>
+
+<main>
   <div class="container">
-    <h3>Adicionar um curso ao AprenderMais</h3>
-    <input type="text" id="nome" placeholder="Nome do curso" required>
-    <textarea id="descricao" placeholder="Descrição breve do curso" required></textarea>
-    <button onclick="salvarCurso()">Salvar Curso</button>
-    <button onclick="window.location.href='inicio.html'" style="margin-left:10px;">⬅ Voltar</button>
+    <h1>Criar / Editar Curso</h1>
+    <p class="note">Faça login (anônimo) para publicar. Você pode enviar uma imagem como thumbnail ou usar uma URL externa.</p>
+
+    <div class="grid">
+      <div>
+        <label>Nome do curso</label>
+        <input id="nome" placeholder="Ex: Introdução ao HTML e CSS" />
+
+        <label>Descrição</label>
+        <textarea id="descricao" placeholder="Descreva o curso em poucas linhas"></textarea>
+
+        <label>Tags (separadas por vírgula)</label>
+        <input id="tags" placeholder="ex: web,frontend,html"/>
+
+        <label>Nível</label>
+        <select id="nivel">
+          <option>Iniciante</option>
+          <option>Intermediário</option>
+          <option>Avançado</option>
+        </select>
+
+        <label>Link externo / URL do curso (opcional)</label>
+        <input id="link" placeholder="https://..." />
+
+        <div class="actions">
+          <button id="salvar" class="btn">Publicar Curso</button>
+          <button id="limpar" class="btn ghost">Limpar</button>
+        </div>
+
+        <div class="small" id="statusInfo" style="margin-top:10px"></div>
+
+        <hr style="margin:16px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
+
+        <div class="my-courses">
+          <h3>Seus cursos (publicados por você)</h3>
+          <div id="myList">Carregando…</div>
+        </div>
+      </div>
+
+      <aside>
+        <label>Thumbnail (arquivo)</label>
+        <div class="thumb-preview" id="thumbPreview">Nenhuma imagem</div>
+        <input type="file" id="thumbFile" accept="image/*" style="margin-top:8px" />
+
+        <label style="margin-top:8px">Ou use uma URL de imagem</label>
+        <input id="thumbUrl" placeholder="https://..." />
+
+        <div class="small">Tamanho máximo sugerido: 1280×720 • Tipos: jpg, png</div>
+      </aside>
+    </div>
   </div>
+</main>
 
-  <footer>© 2025 AprenderMais — GbzStudio</footer>
+<!-- Firebase libs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
+  authDomain: "fir-auth-3521c.firebaseapp.com",
+  databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
+  projectId: "fir-auth-3521c",
+  storageBucket: "fir-auth-3521c.firebasestorage.app",
+  messagingSenderId: "873308453565",
+  appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
+  measurementId: "G-LWMZJ55W7N"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(), db = firebase.database(), storage = firebase.storage();
 
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
-    authDomain: "fir-auth-3521c.firebaseapp.com",
-    databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
-    projectId: "fir-auth-3521c",
-    storageBucket: "fir-auth-3521c.firebasestorage.app",
-    messagingSenderId: "873308453565",
-    appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
-    measurementId: "G-LWMZJ55W7N"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  function salvarCurso() {
-    const nome = document.getElementById('nome').value.trim();
-    const descricao = document.getElementById('descricao').value.trim();
-    if (!nome || !descricao) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-    const novoCurso = db.ref('cursos').push();
-    novoCurso.set({ nome, descricao });
-    alert("Curso adicionado com sucesso!");
-    document.getElementById('nome').value = '';
-    document.getElementById('descricao').value = '';
+let me = null;
+auth.onAuthStateChanged(u=>{
+  me = u;
+  if (!u) {
+    // auto sign in anonymously
+    auth.signInAnonymously().catch(e=>console.warn(e));
+  } else {
+    loadMyCourses();
   }
-  </script>
+});
+
+/* elementos */
+const nomeEl = document.getElementById('nome');
+const descEl = document.getElementById('descricao');
+const tagsEl = document.getElementById('tags');
+const nivelEl = document.getElementById('nivel');
+const linkEl = document.getElementById('link');
+const thumbFileEl = document.getElementById('thumbFile');
+const thumbUrlEl = document.getElementById('thumbUrl');
+const thumbPreview = document.getElementById('thumbPreview');
+const salvarBtn = document.getElementById('salvar');
+const limparBtn = document.getElementById('limpar');
+const statusInfo = document.getElementById('statusInfo');
+const myList = document.getElementById('myList');
+
+let editId = null; // se editar curso existente
+
+thumbFileEl.addEventListener('change', ()=>{
+  const f = thumbFileEl.files[0];
+  if (!f) { thumbPreview.innerHTML='Nenhuma imagem'; return; }
+  const url = URL.createObjectURL(f);
+  thumbPreview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">`;
+});
+
+thumbUrlEl.addEventListener('input', ()=>{
+  const v = thumbUrlEl.value.trim();
+  if (!v) { thumbPreview.innerHTML='Nenhuma imagem'; return; }
+  thumbPreview.innerHTML = `<img src="${v}" style="width:100%;height:100%;object-fit:cover">`;
+});
+
+limparBtn.addEventListener('click', ()=>{ nomeEl.value=''; descEl.value=''; tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFileEl.value=''; thumbUrlEl.value=''; thumbPreview.innerHTML='Nenhuma imagem'; statusInfo.textContent=''; editId=null; });
+
+/* salvar curso: upload de thumb se necessário */
+salvarBtn.addEventListener('click', async ()=>{
+  const nome = nomeEl.value.trim();
+  const descricao = descEl.value.trim();
+  const tags = tagsEl.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const nivel = nivelEl.value;
+  const link = linkEl.value.trim();
+  if (!nome || !descricao) { alert('Preencha nome e descrição'); return; }
+  if (!me) { alert('Aguarde autenticação...'); return; }
+
+  salvarBtn.disabled = true; statusInfo.textContent = 'Salvando...';
+
+  try {
+    let thumbnailUrl = thumbUrlEl.value.trim() || null;
+    if (thumbFileEl.files.length > 0) {
+      const file = thumbFileEl.files[0];
+      const path = `thumbnails/${me.uid}/${Date.now()}_${file.name}`;
+      const ref = storage.ref().child(path);
+      await ref.put(file);
+      thumbnailUrl = await ref.getDownloadURL();
+    }
+
+    const payload = {
+      nome,
+      descricao,
+      tags,
+      nivel,
+      link,
+      thumbnailUrl: thumbnailUrl || null,
+      authorId: me.uid,
+      authorName: 'Anônimo',
+      createdAt: Date.now(),
+      views: 0,
+      likes: 0
+    };
+
+    if (editId) {
+      await db.ref(`cursos/${editId}`).update(payload);
+      toast('Curso atualizado!');
+    } else {
+      const ref = db.ref('cursos').push();
+      await ref.set(payload);
+      toast('Curso publicado com sucesso!');
+    }
+
+    limparBtn.click();
+    loadMyCourses();
+
+  } catch(e){
+    console.error(e);
+    alert('Erro ao salvar: '+e.message);
+  } finally {
+    salvarBtn.disabled = false; statusInfo.textContent = '';
+  }
+});
+
+/* lista dos meus cursos */
+function loadMyCourses(){
+  if (!me) return;
+  db.ref('cursos').orderByChild('authorId').equalTo(me.uid).on('value', snap=>{
+    const html = [];
+    snap.forEach(child=>{
+      const c = child.val(); c._id = child.key;
+      html.push(c);
+    });
+    if (!html.length) { myList.innerHTML = '<div class="note">Você ainda não publicou cursos.</div>'; return; }
+    myList.innerHTML = '';
+    html.forEach(c=>{
+      const row = document.createElement('div'); row.className='course-row';
+      const img = document.createElement('img'); img.src = c.thumbnailUrl || '';
+      row.appendChild(img);
+      const info = document.createElement('div'); info.style.flex='1';
+      info.innerHTML = `<div style="font-weight:700">${c.nome}</div><div style="font-size:13px;color:#94a3b8">${(c.tags||[]).join(', ')}</div>`;
+      row.appendChild(info);
+      const actions = document.createElement('div');
+      const edit = document.createElement('button'); edit.className='btn ghost'; edit.textContent='Editar';
+      edit.onclick = ()=> loadForEdit(c);
+      const del = document.createElement('button'); del.className='btn'; del.style.background='#dc2626'; del.textContent='Excluir';
+      del.onclick = ()=> removeCourse(c._id);
+      actions.appendChild(edit); actions.appendChild(del);
+      row.appendChild(actions);
+      myList.appendChild(row);
+    });
+  });
+}
+
+function loadForEdit(c){
+  editId = c._id;
+  nomeEl.value = c.nome || '';
+  descEl.value = c.descricao || '';
+  tagsEl.value = (c.tags||[]).join(', ');
+  nivelEl.value = c.nivel || 'Iniciante';
+  linkEl.value = c.link || '';
+  thumbUrlEl.value = c.thumbnailUrl || '';
+  thumbPreview.innerHTML = c.thumbnailUrl ? `<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">` : 'Nenhuma imagem';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function removeCourse(id){
+  if (!confirm('Excluir esse curso permanentemente?')) return;
+  try {
+    await db.ref(`cursos/${id}`).remove();
+    toast('Curso excluído.');
+  } catch(e){ alert('Erro: '+e.message) }
+}
+
+/* toast simples */
+function toast(msg){ const d=document.createElement('div'); d.textContent=msg; d.style.cssText="position:fixed;right:16px;bottom:16px;background:#111;padding:10px 12px;border-radius:8px;color:white;z-index:120"; document.body.appendChild(d); setTimeout(()=>d.remove(),2200); }
+
+</script>
 </body>
 </html>
