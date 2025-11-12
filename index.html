@@ -1,63 +1,434 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AprenderMais — Início</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AprenderMais — Cursos Grátis</title>
+  <link rel="icon" href="data:," />
   <style>
-    body {margin:0; font-family:Poppins, sans-serif; background:#f4f6f8; color:#222;}
-    header {background:#0052cc; color:#fff; padding:15px 20px; text-align:center; font-size:1.5em; font-weight:600;}
-    .container {max-width:900px; margin:30px auto; padding:20px;}
-    .curso {background:#fff; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-    .botao {background:#0052cc; color:#fff; border:none; padding:12px 20px; border-radius:8px; margin:10px; cursor:pointer; font-size:1em;}
-    .botao:hover {background:#003d99;}
-    footer {text-align:center; padding:15px; background:#eee; font-size:0.9em; margin-top:40px;}
+    /* Reset + base */
+    :root{
+      --bg:#0f1720; --card:#0b1220; --accent:#4f46e5; --muted:#94a3b8; --glass:rgba(255,255,255,0.03);
+      --radius:12px; --glass-2: rgba(255,255,255,0.02);
+      --maxw:1200px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,#071022 0%,#061218 100%);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    a{color:inherit;text-decoration:none}
+    header.nav{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg, rgba(15,23,32,0.85), rgba(6,18,24,0.75));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);z-index:60}
+    .nav-inner{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:16px;padding:14px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+    .brand .logo{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;box-shadow:0 6px 20px rgba(79,70,229,0.18)}
+    nav.menu{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .btn{background:var(--accent);border:none;color:white;padding:9px 14px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(79,70,229,0.12)}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px}
+    main{max-width:var(--maxw);margin:110px auto 60px;padding:20px}
+    .hero{display:flex;gap:24px;align-items:center;justify-content:space-between}
+    .hero-left{flex:1}
+    .title{font-size:28px;margin:0 0 8px}
+    .subtitle{color:var(--muted);margin:0 0 18px;max-width:60ch}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+    .search{flex:1;min-width:220px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:var(--glass);color:#e6eef8}
+    select,input[type="search"]{appearance:none}
+    .filters{display:flex;gap:8px;align-items:center}
+    .chip{background:var(--glass-2);padding:8px 10px;border-radius:999px;color:var(--muted);cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:10px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,23,0.6);display:flex;flex-direction:column;gap:10px;min-height:170px}
+    .thumb{height:120px;border-radius:10px;background:#081226;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    h3.card-title{margin:0;font-size:16px}
+    p.card-desc{margin:0;color:var(--muted);font-size:13px;line-height:1.2}
+    .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)}
+    .tags{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:8px;font-size:12px}
+    .footer-note{text-align:center;color:var(--muted);margin-top:28px;font-size:13px}
+    /* modal */
+    .modal-back{position:fixed;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));display:none;align-items:center;justify-content:center;z-index:80;padding:20px}
+    .modal{background:linear-gradient(180deg,#071224,#061622);border-radius:14px;max-width:900px;width:100%;padding:18px;border:1px solid rgba(255,255,255,0.04)}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .close-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+    /* pagination */
+    .pager{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:16px}
+    .page-btn{background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+    /* responsive */
+    @media(max-width:880px){.modal-grid{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}}
   </style>
 </head>
 <body>
-  <header>📚 AprenderMais — Cursos Grátis</header>
 
-  <div class="container">
-    <h2>Cursos Disponíveis</h2>
-    <div id="listaCursos"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="logo">AM</div>
+      <div>
+        <div style="font-size:15px">AprenderMais</div>
+        <div style="font-size:11px;color:var(--muted)">Cursos grátis • GbzStudio</div>
+      </div>
+    </div>
 
-    <div style="text-align:center;">
-      <button class="botao" onclick="window.location.href='criar.html'">➕ Criar Curso</button>
-      <button class="botao" onclick="window.location.href='sobre.html'">🌐 Mais Sites</button>
+    <nav class="menu">
+      <a class="btn ghost" href="index.html">Início</a>
+      <a class="btn ghost" href="criar.html">Criar Curso</a>
+      <a class="btn ghost" href="sobre.html">Mais Sites</a>
+      <button id="authBtn" class="btn">Conectar</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-left">
+      <h1 class="title">Aprenda de graça — cursos abertos pra todo mundo</h1>
+      <p class="subtitle">Projete, publique e compartilhe cursos gratuitamente. Busque por assunto, filtre por nível, ordene por mais recentes ou mais vistos.</p>
+
+      <div class="controls">
+        <input id="search" class="search" type="search" placeholder="Buscar por nome, descrição ou tag..." />
+        <select id="sort" class="chip" title="Ordenar">
+          <option value="new">Mais recentes</option>
+          <option value="views">Mais vistos</option>
+          <option value="likes">Mais curtidos</option>
+          <option value="alpha">A → Z</option>
+        </select>
+        <div class="filters" id="filters">
+          <!-- chips serão injetadas -->
+        </div>
+      </div>
+    </div>
+    <div style="width:320px; text-align:right">
+      <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)">
+        <div style="font-size:13px;color:var(--muted)">Cursos publicados</div>
+        <div id="count" style="font-size:22px;font-weight:700;margin-top:6px">0</div>
+        <div style="margin-top:12px">
+          <button class="btn" onclick="location.href='criar.html'">Publicar curso</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div id="grid" class="grid"></div>
+    <div id="pager" class="pager"></div>
+    <div class="footer-note">© 2025 AprenderMais — GbzStudio • Dados no Firebase Realtime Database</div>
+  </section>
+</main>
+
+<!-- Modal -->
+<div id="modalBack" class="modal-back" role="dialog" aria-hidden="true">
+  <div class="modal" role="document">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <strong id="modalTitle">Curso</strong>
+      <div style="display:flex;gap:8px">
+        <button id="likeBtn" class="close-btn">Curtir ❤️</button>
+        <button id="closeModal" class="close-btn">Fechar ✕</button>
+      </div>
+    </div>
+
+    <div class="modal-grid">
+      <div>
+        <div class="thumb" id="modalThumb"><!-- imagem --></div>
+        <p id="modalDesc" style="margin-top:12px;color:var(--muted)"></p>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div id="modalMeta" style="color:var(--muted);font-size:13px"></div>
+          <div>
+            <button id="enrollBtn" class="btn">Visitar / Matricular</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Tags</div>
+          <div id="modalTags" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+
+        <div style="margin-top:14px;color:var(--muted);font-size:13px">Detalhes técnicos</div>
+        <ul id="modalDetails" style="color:var(--muted);font-size:13px"></ul>
+      </div>
     </div>
   </div>
+</div>
 
-  <footer>© 2025 AprenderMais — desenvolvido por GbzStudio</footer>
+<!-- Firebase compat libs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* =========================
+   CONFIGURAÇÃO FIREBASE
+   ========================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
+  authDomain: "fir-auth-3521c.firebaseapp.com",
+  databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
+  projectId: "fir-auth-3521c",
+  storageBucket: "fir-auth-3521c.firebasestorage.app",
+  messagingSenderId: "873308453565",
+  appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
+  measurementId: "G-LWMZJ55W7N"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+const storage = firebase.storage();
 
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
-    authDomain: "fir-auth-3521c.firebaseapp.com",
-    databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
-    projectId: "fir-auth-3521c",
-    storageBucket: "fir-auth-3521c.firebasestorage.app",
-    messagingSenderId: "873308453565",
-    appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
-    measurementId: "G-LWMZJ55W7N"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+/* =========================
+   AUTENTICAÇÃO ANÔNIMA
+   ========================= */
+let currentUser = null;
+auth.onAuthStateChanged(u => {
+  currentUser = u;
+  const b = document.getElementById('authBtn');
+  if (u) {
+    b.textContent = 'Conectado';
+    b.classList.remove('btn');
+    b.classList.add('btn','ghost');
+  } else {
+    b.textContent = 'Conectar';
+  }
+});
+document.getElementById('authBtn').addEventListener('click', async ()=>{
+  if (!auth.currentUser) {
+    try {
+      await auth.signInAnonymously();
+      toast('Conectado anonimamente');
+    } catch(e){ console.error(e); toast('Erro ao conectar: '+e.message) }
+  } else {
+    auth.signOut();
+    toast('Desconectado');
+  }
+});
 
-  const lista = document.getElementById('listaCursos');
-  db.ref('cursos').on('value', (snapshot) => {
-    lista.innerHTML = '';
-    snapshot.forEach((child) => {
-      const c = child.val();
-      const div = document.createElement('div');
-      div.className = 'curso';
-      div.innerHTML = `<h3>${c.nome}</h3><p>${c.descricao}</p>`;
-      lista.appendChild(div);
-    });
+/* =========================
+   ESTADO E UTILITÁRIOS
+   ========================= */
+const state = { cursos: [], tags: new Set(), page:1, perPage:8, filterTag:null, search:'' };
+
+const el = { grid:document.getElementById('grid'), count:document.getElementById('count'), pager:document.getElementById('pager'), filters:document.getElementById('filters'), search:document.getElementById('search'), sort:document.getElementById('sort') };
+
+/* small toast */
+function toast(msg, time=2500){
+  const d = document.createElement('div');
+  d.textContent = msg;
+  d.style.cssText = "position:fixed;right:18px;bottom:18px;background:#111;padding:12px 16px;border-radius:10px;color:white;z-index:120;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 30px rgba(2,6,23,0.6)";
+  document.body.appendChild(d);
+  setTimeout(()=>d.style.opacity='0.0',time);
+  setTimeout(()=>d.remove(),time+420);
+}
+
+/* =========================
+   ESCUTA: cursos no Realtime DB
+   ========================= */
+db.ref('cursos').on('value', snapshot=>{
+  const arr = [];
+  state.tags = new Set();
+  snapshot.forEach(child=>{
+    const c = child.val();
+    c._id = child.key;
+    // compatibilização: garantir fields
+    c.views = c.views || 0;
+    c.likes = c.likes || 0;
+    c.createdAt = c.createdAt || Date.now();
+    c.tags = c.tags || [];
+    c.nivel = c.nivel || 'Indefinido';
+    arr.push(c);
+    (c.tags||[]).forEach(t => state.tags.add(t));
   });
-  </script>
+  // ordenar por createdAt desc por padrão
+  state.cursos = arr;
+  renderFilters();
+  render();
+});
+
+/* =========================
+   RENDERIZAÇÃO E FILTROS
+   ========================= */
+function renderFilters(){
+  el.filters.innerHTML = '';
+  const all = document.createElement('div');
+  all.className='chip'; all.textContent='Todos';
+  all.onclick = ()=>{ state.filterTag = null; state.page=1; render(); };
+  el.filters.appendChild(all);
+
+  Array.from(state.tags).slice(0,16).forEach(tag=>{
+    const ch = document.createElement('div');
+    ch.className='chip'; ch.textContent = tag;
+    ch.onclick = ()=>{ state.filterTag = tag; state.page=1; render(); };
+    el.filters.appendChild(ch);
+  });
+}
+
+function applySearchFilter(list){
+  const q = state.search.trim().toLowerCase();
+  if (!q) return list;
+  return list.filter(c=>{
+    return (c.nome && c.nome.toLowerCase().includes(q))
+      || (c.descricao && c.descricao.toLowerCase().includes(q))
+      || ( (c.tags||[]).join(' ').toLowerCase().includes(q) );
+  });
+}
+
+function applyTagFilter(list){
+  if (!state.filterTag) return list;
+  return list.filter(c => (c.tags||[]).includes(state.filterTag));
+}
+
+function applySort(list){
+  const s = el.sort.value;
+  if (s==='new') return list.sort((a,b)=>b.createdAt - a.createdAt);
+  if (s==='views') return list.sort((a,b)=>b.views - a.views);
+  if (s==='likes') return list.sort((a,b)=>b.likes - a.likes);
+  if (s==='alpha') return list.sort((a,b)=> (a.nome||'').localeCompare(b.nome||'') );
+  return list;
+}
+
+function render(){
+  let list = state.cursos.slice();
+  list = applySearchFilter(list);
+  list = applyTagFilter(list);
+  list = applySort(list);
+
+  // count & pagination
+  el.count.textContent = list.length;
+  const total = Math.max(1, Math.ceil(list.length / state.perPage));
+  if (state.page > total) state.page = total;
+  const start = (state.page-1) * state.perPage;
+  const pageItems = list.slice(start, start + state.perPage);
+
+  // render grid
+  el.grid.innerHTML = '';
+  pageItems.forEach(c=>{
+    const d = document.createElement('div'); d.className='card';
+    const thumb = document.createElement('div'); thumb.className='thumb';
+    if (c.thumbnailUrl) {
+      const img = document.createElement('img'); img.src = c.thumbnailUrl; img.alt = c.nome || 'thumbnail'; thumb.appendChild(img);
+    } else {
+      thumb.innerHTML = `<div style="padding:24px;color:var(--muted);text-align:center">Sem imagem</div>`;
+    }
+
+    const title = document.createElement('h3'); title.className='card-title'; title.textContent = c.nome || '—';
+    const desc = document.createElement('p'); desc.className='card-desc'; desc.textContent = (c.descricao||'').slice(0,120) + ( (c.descricao||'').length>120 ? '…' : '' );
+    const meta = document.createElement('div'); meta.className='meta';
+    meta.innerHTML = `<div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700">${c.nivel}</span><span class="tags">${(c.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('')}</span></div>
+                      <div style="text-align:right;color:var(--muted);font-size:12px">${new Date(c.createdAt).toLocaleDateString()}</div>`;
+
+    d.appendChild(thumb);
+    d.appendChild(title);
+    d.appendChild(desc);
+    d.appendChild(meta);
+
+    // actions
+    const btnRow = document.createElement('div'); btnRow.style.display='flex'; btnRow.style.justifyContent='space-between'; btnRow.style.marginTop='8px';
+    const openBtn = document.createElement('button'); openBtn.className='btn ghost'; openBtn.textContent='Ver curso';
+    openBtn.onclick = ()=> openModal(c);
+    const quick = document.createElement('div'); quick.style.color='var(--muted)'; quick.style.fontSize='13px'; quick.textContent = `👀 ${c.views||0} • ❤️ ${c.likes||0}`;
+    btnRow.appendChild(openBtn); btnRow.appendChild(quick);
+    d.appendChild(btnRow);
+
+    el.grid.appendChild(d);
+  });
+
+  renderPager(total);
+}
+
+/* =========================
+   PAGINAÇÃO
+   ========================= */
+function renderPager(total){
+  el.pager.innerHTML = '';
+  if (total <= 1) return;
+  if (state.page > 1){
+    const p = document.createElement('button'); p.textContent='◀'; p.className='page-btn';
+    p.onclick = ()=>{ state.page--; render(); };
+    el.pager.appendChild(p);
+  }
+  // páginas (muito simples)
+  for(let i=1;i<=total;i++){
+    const b = document.createElement('button'); b.textContent = i; b.className='page-btn';
+    if (i===state.page){ b.style.borderColor='rgba(79,70,229,0.9)'; b.style.color='white'; b.style.background='rgba(79,70,229,0.12)'; }
+    b.onclick = (()=>{ const p=i; return ()=>{ state.page = p; render(); }})();
+    el.pager.appendChild(b);
+  }
+  if (state.page < total){
+    const n = document.createElement('button'); n.textContent='▶'; n.className='page-btn';
+    n.onclick = ()=>{ state.page++; render(); };
+    el.pager.appendChild(n);
+  }
+}
+
+/* =========================
+   BUSCA / SORT EVENTS
+   ========================= */
+el.search.addEventListener('input', (e)=>{ state.search = e.target.value; state.page=1; render(); });
+el.sort.addEventListener('change', ()=>{ state.page=1; render(); });
+
+/* =========================
+   MODAL DE DETALHES
+   ========================= */
+const modalBack = document.getElementById('modalBack');
+const modalTitle = document.getElementById('modalTitle');
+const modalThumb = document.getElementById('modalThumb');
+const modalDesc = document.getElementById('modalDesc');
+const modalTags = document.getElementById('modalTags');
+const modalMeta = document.getElementById('modalMeta');
+const modalDetails = document.getElementById('modalDetails');
+const enrollBtn = document.getElementById('enrollBtn');
+const likeBtn = document.getElementById('likeBtn');
+
+let openCourse = null;
+function openModal(course){
+  openCourse = course;
+  modalTitle.textContent = course.nome || 'Curso';
+  modalDesc.textContent = course.descricao || '';
+  modalMeta.textContent = `${new Date(course.createdAt).toLocaleString()} • ${course.nivel} • por ${course.authorName||'Anônimo'}`;
+  modalTags.innerHTML = '';
+  (course.tags||[]).forEach(t=>{ const s = document.createElement('span'); s.className='tag'; s.textContent = t; modalTags.appendChild(s); });
+  modalDetails.innerHTML = '';
+  modalDetails.innerHTML = `<li>Views: ${course.views||0}</li><li>Likes: ${course.likes||0}</li>`;
+  // thumb
+  modalThumb.innerHTML = '';
+  if (course.thumbnailUrl){
+    const img = document.createElement('img'); img.src = course.thumbnailUrl; img.alt = course.nome; modalThumb.appendChild(img);
+  } else {
+    modalThumb.innerHTML = '<div style="padding:24px;color:var(--muted);text-align:center">Sem imagem</div>';
+  }
+
+  // show modal
+  modalBack.style.display = 'flex';
+  // incrementa views (debounced simples)
+  db.ref(`cursos/${course._id}/views`).set((course.views||0) + 1).catch(e=>console.warn(e));
+}
+
+document.getElementById('closeModal').addEventListener('click', ()=>{ modalBack.style.display='none'; });
+modalBack.addEventListener('click', (e)=>{ if (e.target === modalBack) modalBack.style.display='none'; });
+
+enrollBtn.addEventListener('click', ()=>{
+  if (!openCourse) return;
+  toast('Ação de matricular visitou o link (simulado).');
+  // Simula visita: increment views (já incrementado ao abrir)
+});
+
+likeBtn.addEventListener('click', ()=>{
+  if (!openCourse) return;
+  const ref = db.ref(`cursos/${openCourse._id}/likes`);
+  const newLikes = (openCourse.likes || 0) + 1;
+  ref.set(newLikes).then(()=>{ toast('Obrigado pelo like!'); modalDetails.querySelector('li:nth-child(2)').textContent = `Likes: ${newLikes}`; openCourse.likes = newLikes; render(); }).catch(e=>toast('Erro: '+e.message));
+});
+
+/* =========================
+   INICIALIZAÇÃO
+   ========================= */
+(function init(){
+  // simple seed - não sobrescreve dados existentes. (opcional)
+  db.ref('meta/seedChecked').once('value').then(snap=>{
+    if (!snap.exists()){
+      // não semear automaticamente — deixei comentado caso queira...
+      // db.ref('meta/seedChecked').set(true);
+    }
+  });
+})();
+
+</script>
 </body>
 </html>
