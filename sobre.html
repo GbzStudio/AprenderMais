@@ -4,42 +4,166 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Sobre — AprenderMais</title>
+
   <style>
-    body {margin:0; font-family:Poppins, sans-serif; background:#f4f6f8; color:#222;}
-    header {background:#0052cc; color:#fff; padding:15px; text-align:center; font-size:1.5em;}
-    .container {max-width:700px; margin:30px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-    a {display:block; margin:10px 0; color:#0052cc; text-decoration:none; font-weight:500;}
-    a:hover {text-decoration:underline;}
-    footer {text-align:center; padding:15px; background:#eee; font-size:0.9em; margin-top:40px;}
+    * {box-sizing: border-box;}
+    body {
+      margin:0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e3ecff, #f5f9ff);
+      color:#222;
+      overflow-x:hidden;
+    }
+
+    header {
+      background: linear-gradient(90deg, #004aad, #0073e6);
+      color:#fff;
+      padding:20px;
+      text-align:center;
+      font-size:1.7em;
+      font-weight:600;
+      letter-spacing:0.5px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      max-width:850px;
+      margin:50px auto;
+      background:#fff;
+      padding:40px;
+      border-radius:15px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
+    h2 {
+      text-align:center;
+      color:#004aad;
+      font-weight:600;
+      margin-bottom:25px;
+    }
+
+    p {
+      text-align:center;
+      font-size:1.1em;
+      color:#444;
+      margin-bottom:40px;
+    }
+
+    .link-card {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:20px;
+      margin:15px 0;
+      border-radius:12px;
+      background:linear-gradient(135deg, #f9fbff, #eaf2ff);
+      border:1px solid #dbe7ff;
+      transition:transform 0.3s, box-shadow 0.3s;
+    }
+
+    .link-card:hover {
+      transform:translateY(-4px);
+      box-shadow:0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .link-card h3 {
+      color:#003d99;
+      margin:0;
+      font-size:1.3em;
+    }
+
+    .link-card a {
+      background:#0052cc;
+      color:#fff;
+      text-decoration:none;
+      padding:10px 18px;
+      border-radius:8px;
+      font-weight:500;
+      transition:background 0.3s;
+    }
+
+    .link-card a:hover {
+      background:#003d99;
+    }
+
+    .btn-voltar {
+      display:inline-block;
+      margin-top:30px;
+      background:#004aad;
+      color:#fff;
+      text-decoration:none;
+      padding:12px 20px;
+      border-radius:10px;
+      font-weight:500;
+      transition:background 0.3s;
+    }
+
+    .btn-voltar:hover {
+      background:#002f73;
+    }
+
+    footer {
+      text-align:center;
+      padding:20px;
+      background:#f0f3fa;
+      font-size:0.95em;
+      color:#555;
+      margin-top:50px;
+      border-top:1px solid #ddd;
+    }
   </style>
 </head>
 <body>
-  <header>🌐 Mais Sites — AprenderMais</header>
+
+  <header>🌐 Plataformas Confiáveis de Cursos Grátis</header>
 
   <div class="container">
-    <h2>Outros Projetos do GbzStudio</h2>
-    <a href="https://gbzstudio.github.io/">🏠 GbzStudio Principal</a>
-    <a href="https://gbzstudio.github.io/GbzStore/">🛍️ GbzStore</a>
-    <a href="https://gbzstudio.github.io/BooyahMind/">💡 BooyahMind</a>
-    <a href="inicio.html">⬅ Voltar à Página Inicial</a>
+    <h2>Descubra onde estudar gratuitamente</h2>
+    <p>Selecionamos plataformas sérias e reconhecidas que oferecem cursos online gratuitos, certificados e conteúdos de qualidade.</p>
+
+    <div class="link-card">
+      <h3>🎓 Coursera</h3>
+      <a href="https://www.coursera.org" target="_blank">Acessar</a>
+    </div>
+
+    <div class="link-card">
+      <h3>📘 edX</h3>
+      <a href="https://www.edx.org" target="_blank">Acessar</a>
+    </div>
+
+    <div class="link-card">
+      <h3>🎓 OpenLearn (Open University)</h3>
+      <a href="https://www.open.edu/openlearn/free-courses/full-catalogue" target="_blank">Acessar</a>
+    </div>
+
+    <div style="text-align:center;">
+      <a href="index.html" class="btn-voltar">⬅ Voltar ao Início</a>
+    </div>
   </div>
 
-  <footer>© 2025 AprenderMais — GbzStudio</footer>
+  <footer>© 2025 AprenderMais — GbzStudio | Todas as plataformas listadas são externas e independentes.</footer>
 
   <!-- Firebase (mantido para integração futura) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
-    authDomain: "fir-auth-3521c.firebaseapp.com",
-    databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
-    projectId: "fir-auth-3521c",
-    storageBucket: "fir-auth-3521c.firebasestorage.app",
-    messagingSenderId: "873308453565",
-    appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
-    measurementId: "G-LWMZJ55W7N"
-  };
-  firebase.initializeApp(firebaseConfig);
+    const firebaseConfig = {
+      apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
+      authDomain: "fir-auth-3521c.firebaseapp.com",
+      databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
+      projectId: "fir-auth-3521c",
+      storageBucket: "fir-auth-3521c.firebasestorage.app",
+      messagingSenderId: "873308453565",
+      appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
+      measurementId: "G-LWMZJ55W7N"
+    };
+    firebase.initializeApp(firebaseConfig);
   </script>
+
 </body>
 </html>
