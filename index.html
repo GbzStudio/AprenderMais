@@ -1,30 +1,34 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AprenderMais — Início</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AprenderMais — Início (Avançado)</title>
+  <meta name="description" content="AprenderMais — plataforma de cursos grátis. Busque, filtre, veja módulos, comentar e favoritar.">
   <style>
     :root{
-      --bg:#071226; --card:#061424; --accent:#4f46e5; --muted:#94a3b8;
-      --glass:rgba(255,255,255,0.02); --maxw:1200px; --radius:12px;
+      --bg:#071226; --card:#061424; --accent:#4f46e5; --accent-2:#06b6d4; --muted:#94a3b8;
+      --glass:rgba(255,255,255,0.02); --maxw:1300px; --radius:12px;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#071022,#061218);-webkit-font-smoothing:antialiased;padding:24px;}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;
+      background:linear-gradient(180deg,#071022,#061218);-webkit-font-smoothing:antialiased;
+      padding:22px;line-height:1.35;
+    }
     .wrap{max-width:var(--maxw);margin:0 auto}
-    header{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#4f46e5);display:flex;align-items:center;justify-content:center;font-weight:800}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px;position:sticky;top:0;z-index:100;background:linear-gradient(90deg, rgba(7,18,38,0.4), rgba(6,18,24,0.4));backdrop-filter: blur(6px);padding:12px;border-radius:10px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800}
     h1{margin:0;font-size:20px}
-    .nav{margin-left:auto;display:flex;gap:8px}
+    .subtitle{color:var(--muted);font-size:13px}
+    nav.top{margin-left:auto;display:flex;gap:8px;align-items:center}
     .btn{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
     .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-    .hero{display:flex;gap:18px;align-items:center;margin-bottom:18px}
-    .hero-left{flex:1}
-    .subtitle{color:var(--muted);margin-top:6px}
-    .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-    input.search{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:var(--glass);color:inherit;min-width:220px}
-    select.filter{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:var(--glass);color:inherit}
-
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#dbeafe}
+    .search-row{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+    input[type="search"], select, input[type="text"]{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:var(--glass);color:inherit;min-width:180px}
+    .pill{background:rgba(255,255,255,0.02);padding:8px 12px;border-radius:999px;color:var(--muted);font-size:13px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:18px}
     .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,23,0.6);display:flex;flex-direction:column;gap:10px;min-height:220px;transition:transform .18s,box-shadow .18s}
     .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.7)}
@@ -36,10 +40,14 @@
     .tags{display:flex;gap:6px;flex-wrap:wrap}
     .tag{background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:8px;font-size:12px;color:var(--muted)}
     .card-row{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+    .muted{color:var(--muted)}
+    .pager{display:flex;gap:6px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+    .skeleton{height:120px;background:linear-gradient(90deg,#0b1726,#081226,#0b1726);border-radius:8px;animation: shimmer 1.6s linear infinite;background-size:200% 100%}
+    @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 
     /* modal */
-    .modal-back{position:fixed;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));display:none;align-items:center;justify-content:center;z-index:120;padding:18px}
-    .modal{background:linear-gradient(180deg,#071224,#061622);border-radius:12px;max-width:1000px;width:100%;padding:18px;border:1px solid rgba(255,255,255,0.04);color:#e6eef8}
+    .modal-back{position:fixed;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));display:none;align-items:flex-start;justify-content:center;z-index:300;padding:40px;overflow:auto}
+    .modal{background:linear-gradient(180deg,#071224,#061622);border-radius:12px;max-width:1100px;width:100%;padding:18px;border:1px solid rgba(255,255,255,0.04);color:#e6eef8}
     .modal-grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
     .module{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
     .module h4{margin:0;display:flex;justify-content:space-between;gap:12px;align-items:center}
@@ -47,19 +55,19 @@
     .close-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
 
     /* responsive */
-    @media(max-width:920px){ .modal-grid{grid-template-columns:1fr} .hero{flex-direction:column;align-items:flex-start} }
+    @media(max-width:980px){ .modal-grid{grid-template-columns:1fr} .search-row{flex-direction:column;align-items:stretch} }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap" role="main">
     <header>
-      <div class="logo">AM</div>
+      <div class="logo" aria-hidden>AM</div>
       <div>
         <h1>AprenderMais</h1>
-        <div class="subtitle">Plataforma de cursos grátis — aprenda e compartilhe</div>
+        <div class="subtitle">Cursos grátis — comunidade aberta</div>
       </div>
 
-      <nav class="nav">
+      <nav class="top" aria-label="Navegação principal">
         <a class="btn ghost" href="index.html">Início</a>
         <a class="btn ghost" href="criar.html">Criar Curso</a>
         <a class="btn ghost" href="sobre.html">Mais Sites</a>
@@ -67,52 +75,74 @@
       </nav>
     </header>
 
-    <section class="hero">
-      <div class="hero-left">
-        <div style="display:flex;align-items:center;gap:12px">
-          <h2 style="margin:0">Cursos Disponíveis</h2>
-          <div id="count" style="color:var(--muted);font-size:13px">—</div>
-        </div>
-        <div class="controls">
-          <input id="search" class="search" type="search" placeholder="Buscar por nome, descrição ou tag..." />
-          <select id="sort" class="filter">
-            <option value="new">Mais recentes</option>
-            <option value="views">Mais vistos</option>
-            <option value="likes">Mais curtidos</option>
-            <option value="alpha">A → Z</option>
-          </select>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)">
-          <div style="font-size:13px;color:var(--muted)">Ações</div>
-          <div style="margin-top:8px">
-            <a class="btn" href="criar.html">➕ Publicar curso</a>
-          </div>
-        </div>
+    <!-- controls -->
+    <section class="search-row" aria-label="controles de busca e filtro">
+      <input id="search" type="search" placeholder="Buscar por nome, descrição, tag ou autor..." aria-label="Buscar cursos">
+      <select id="filterNivel" aria-label="Filtrar por nível">
+        <option value="">Todos os níveis</option>
+        <option>Iniciante</option>
+        <option>Intermediário</option>
+        <option>Avançado</option>
+      </select>
+      <select id="filterTag" aria-label="Filtrar por tag">
+        <option value="">Todas as tags</option>
+      </select>
+      <select id="sort" aria-label="Ordenar">
+        <option value="new">Mais recentes</option>
+        <option value="views">Mais vistos</option>
+        <option value="likes">Mais curtidos</option>
+        <option value="rating">Melhor avaliados</option>
+        <option value="alpha">A → Z</option>
+      </select>
+
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <button id="exportCsv" class="btn secondary" title="Exportar resultados filtrados">Exportar CSV</button>
+        <label for="importJson" class="btn secondary" style="cursor:pointer">Importar JSON</label>
+        <input id="importJson" type="file" accept=".json" style="display:none">
+        <button id="clearCache" class="btn ghost">Limpar cache</button>
       </div>
     </section>
 
+    <!-- top quick filters -->
+    <section style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <div id="tagCloud"></div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <div id="onlineIndicator" class="pill">Conectando...</div>
+        <div id="favCount" class="pill">Favoritos: 0</div>
+      </div>
+    </section>
+
+    <!-- grid -->
     <section>
-      <div id="grid" class="grid"></div>
-      <div id="pager" style="margin-top:18px;text-align:center;color:var(--muted)"></div>
-      <div style="text-align:center;color:var(--muted);margin-top:24px">© 2025 AprenderMais — GbzStudio</div>
+      <div id="grid" class="grid" aria-live="polite" style="min-height:240px">
+        <!-- skeleton initial -->
+        <div class="card"><div class="skeleton" style="height:120px;border-radius:8px"></div></div>
+        <div class="card"><div class="skeleton" style="height:120px;border-radius:8px"></div></div>
+        <div class="card"><div class="skeleton" style="height:120px;border-radius:8px"></div></div>
+      </div>
+      <div class="pager" id="pager" role="navigation" aria-label="Paginação"></div>
+      <div style="text-align:center;color:var(--muted);margin-top:18px">© 2025 AprenderMais — GbzStudio</div>
     </section>
   </div>
 
-  <!-- Modal: módulos do curso -->
+  <!-- Modal: mostra módulos e comentários -->
   <div id="modalBack" class="modal-back" role="dialog" aria-hidden="true">
-    <div class="modal" role="document">
+    <div class="modal" role="document" aria-modal="true">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <strong id="modalTitle">Curso</strong>
+        <div>
+          <strong id="modalTitle">Curso</strong>
+          <div id="modalMeta" class="muted" style="font-size:13px"></div>
+        </div>
         <div style="display:flex;gap:8px">
+          <button id="favBtn" class="btn ghost">★ Favoritar</button>
+          <button id="likeModal" class="btn">Curtir</button>
           <button id="closeModal" class="close-btn">Fechar ✕</button>
         </div>
       </div>
 
       <div class="modal-grid">
         <div>
-          <div id="modalThumb" style="height:200px;border-radius:10px;background:#081226;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.02)"></div>
+          <div id="modalThumb" style="height:220px;border-radius:10px;background:#081226;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.02)"></div>
           <p id="modalDesc" style="margin-top:12px;color:var(--muted)"></p>
 
           <div style="margin-top:12px">
@@ -122,122 +152,272 @@
         </div>
 
         <aside style="padding-left:12px;border-left:1px solid rgba(255,255,255,0.02)">
-          <div style="font-size:13px;color:var(--muted)">Informações</div>
-          <div style="margin-top:8px;font-weight:700" id="modalMeta">—</div>
-          <div style="margin-top:10px" id="modalStats" class="muted"></div>
+          <div style="font-size:13px;color:var(--muted)">Estatísticas</div>
+          <div id="modalStats" style="margin-top:8px;font-weight:700">—</div>
+
           <div style="margin-top:18px">
             <a id="openCourseLink" class="btn" href="#" target="_blank" style="display:inline-block">Abrir Link</a>
+          </div>
+
+          <div style="margin-top:18px">
+            <h4 style="margin:0 0 6px 0">Comentários</h4>
+            <div id="commentsList" style="max-height:240px;overflow:auto"></div>
+            <textarea id="commentText" placeholder="Escreva um comentário..." style="width:100%;margin-top:8px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);min-height:80px;color:inherit"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="postComment" class="btn">Postar</button>
+              <button id="clearComments" class="btn ghost">Limpar comentários</button>
+            </div>
           </div>
         </aside>
       </div>
     </div>
   </div>
 
-  <!-- Firebase compat libs -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
   <script>
-    // ================== CONFIG FIREBASE ==================
-    const firebaseConfig = {
-      apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
-      authDomain: "fir-auth-3521c.firebaseapp.com",
-      databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
-      projectId: "fir-auth-3521c",
-      storageBucket: "fir-auth-3521c.firebasestorage.app",
-      messagingSenderId: "873308453565",
-      appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
-      measurementId: "G-LWMZJ55W7N"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth(), db = firebase.database(), storage = firebase.storage();
+  /*************************************************************************
+   * AprenderMais — index.html (avançado)
+   * Recursos incluídos:
+   *  - Listagem de cursos do nó /cursos/
+   *  - Busca com debounce, filtros por tag/nivel, ordenação
+   *  - Modal com módulos, comentários, like e favoritar (localStorage + sync opcional)
+   *  - Export CSV / Import JSON
+   *  - Lazy-load imagens, skeleton, IndexedDB caching (simples)
+   *  - Indicador online/offline
+   *  - Admin actions (visíveis se isAdmin=true no usuário) — control via DB
+   *************************************************************************/
 
-    // ================== AUTENTICAÇÃO (ANÔNIMA) ==================
-    let me = null;
-    auth.onAuthStateChanged(u => {
-      me = u;
-      const authBtn = document.getElementById('authBtn');
-      if (u) {
-        authBtn.textContent = 'Conectado';
-        authBtn.classList.add('btn','ghost');
-      } else {
-        authBtn.textContent = 'Conectar';
-      }
+  // ================= FIREBASE CONFIG =================
+  const firebaseConfig = {
+    apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
+    authDomain: "fir-auth-3521c.firebaseapp.com",
+    databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
+    projectId: "fir-auth-3521c",
+    storageBucket: "fir-auth-3521c.firebasestorage.app",
+    messagingSenderId: "873308453565",
+    appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
+    measurementId: "G-LWMZJ55W7N"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth(), db = firebase.database(), storage = firebase.storage();
+
+  // ================= STATE & ELEMENTS =================
+  const grid = document.getElementById('grid');
+  const pager = document.getElementById('pager');
+  const searchEl = document.getElementById('search');
+  const sortEl = document.getElementById('sort');
+  const filterTag = document.getElementById('filterTag');
+  const filterNivel = document.getElementById('filterNivel');
+  const tagCloud = document.getElementById('tagCloud');
+  const importJsonEl = document.getElementById('importJson');
+  const exportCsvBtn = document.getElementById('exportCsv');
+  const clearCacheBtn = document.getElementById('clearCache');
+  const onlineIndicator = document.getElementById('onlineIndicator');
+  const favCountEl = document.getElementById('favCount');
+
+  const modalBack = document.getElementById('modalBack');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalThumb = document.getElementById('modalThumb');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalModules = document.getElementById('modalModules');
+  const modalStats = document.getElementById('modalStats');
+  const openCourseLink = document.getElementById('openCourseLink');
+  const favBtn = document.getElementById('favBtn');
+  const likeModal = document.getElementById('likeModal');
+  const closeModalBtn = document.getElementById('closeModal');
+
+  const commentsList = document.getElementById('commentsList');
+  const commentText = document.getElementById('commentText');
+  const postCommentBtn = document.getElementById('postComment');
+  const clearCommentsBtn = document.getElementById('clearComments');
+
+  let cursos = [];                // full list from DB
+  let filtered = [];              // filtered list after search/filters
+  let page = 1, perPage = 8;      // pagination
+  let user = null;                // firebase user
+  let isAdmin = false;            // flag based on DB or custom claim
+  let favorites = loadFavorites(); // local favorites map {cursoId:true}
+  let observer = null;            // intersection observer for lazy load
+  let currentModalCourse = null;  // curso object opened in modal
+
+  // indexedDB minimal caching (wrapper)
+  const IDB_KEY = 'aprendermais_cache_v1';
+  function cacheSave(data){ try{ localStorage.setItem(IDB_KEY, JSON.stringify({ts:Date.now(),data})); }catch(e){} }
+  function cacheLoad(){ try{ const s = localStorage.getItem(IDB_KEY); if (!s) return null; const o = JSON.parse(s); return o.data || null; }catch(e){return null} }
+
+  // ================= UTIL HELPERS =================
+  function toast(msg, time=2200){
+    const d = document.createElement('div');
+    d.textContent = msg;
+    d.style.cssText = "position:fixed;right:18px;bottom:18px;background:#111;padding:12px 16px;border-radius:10px;color:white;z-index:9999;box-shadow:0 8px 30px rgba(2,6,23,0.6)";
+    document.body.appendChild(d);
+    setTimeout(()=>d.style.opacity='0', time);
+    setTimeout(()=>d.remove(), time+420);
+  }
+
+  function formatDate(ts){ try{ return new Date(ts).toLocaleDateString(); }catch(e){return '-'} }
+  function debounce(fn, ms=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+  // ================= AUTH =================
+  auth.onAuthStateChanged(u => {
+    user = u;
+    const authBtn = document.getElementById('authBtn');
+    if (!u){
+      authBtn.textContent = 'Conectar';
+      isAdmin = false;
+    } else {
+      authBtn.textContent = 'Conectado';
+      // check admin flag in DB: users/{uid}/isAdmin
+      db.ref(`users/${u.uid}/isAdmin`).once('value').then(snap=>{
+        isAdmin = !!snap.val();
+      }).catch(()=>{ isAdmin = false; });
+    }
+  });
+
+  document.getElementById('authBtn').addEventListener('click', async ()=>{
+    if (!auth.currentUser){
+      try{ await auth.signInAnonymously(); toast('Conectado anonimamente'); }
+      catch(e){ console.error(e); toast('Erro: '+e.message); }
+    } else { auth.signOut(); toast('Desconectado'); }
+  });
+
+  // ================= FAVORITES (localStorage + sync optional) =================
+  function loadFavorites(){
+    try{
+      const s = localStorage.getItem('apm_favs');
+      return s ? JSON.parse(s) : {};
+    }catch(e){return {}}
+  }
+  function saveFavorites(){
+    try{ localStorage.setItem('apm_favs', JSON.stringify(favorites)); favCountEl.textContent = 'Favoritos: ' + Object.keys(favorites).length; }catch(e){}
+  }
+  saveFavorites();
+
+  // if user connected and wants sync, we can push favorites to DB under favorites/{uid}
+  async function syncFavoritesToFirebase(){
+    if (!user) return;
+    try{ await db.ref(`favorites/${user.uid}`).set(Object.keys(favorites)); toast('Favoritos sincronizados'); }
+    catch(e){ console.warn('sync err', e); }
+  }
+
+  // ================= LISTEN / READ cursos from DB =================
+  // primary listener (keep it simple: value listener)
+  db.ref('cursos').on('value', snapshot=>{
+    const arr = [];
+    snapshot.forEach(child=>{
+      const c = child.val();
+      c._id = child.key;
+      c.views = c.views || 0;
+      c.likes = c.likes || 0;
+      c.rating = c.rating || {sum:0,count:0}; // optional structure
+      c.avgRating = c.rating.count ? (c.rating.sum / c.rating.count) : 0;
+      c.createdAt = c.createdAt || Date.now();
+      c.tags = c.tags || [];
+      arr.push(c);
     });
-    document.getElementById('authBtn').addEventListener('click', async ()=>{
-      if (!auth.currentUser) {
-        try{ await auth.signInAnonymously(); toast('Conectado anonimamente'); }
-        catch(e){ console.error(e); toast('Erro: '+e.message); }
-      } else { auth.signOut(); toast('Desconectado'); }
+    cursos = arr;
+    cacheSave(cursos);
+    rebuildTagOptions();
+    applyFiltersAndRender();
+  }, err => {
+    // if DB read fails (offline), try load cache
+    const cached = cacheLoad();
+    if (cached) { cursos = cached; rebuildTagOptions(); applyFiltersAndRender(); toast('Usando cache local (offline)'); }
+  });
+
+  // ================= UI: tags & filters =================
+  function rebuildTagOptions(){
+    const tagsSet = new Set();
+    cursos.forEach(c => (c.tags||[]).forEach(t => tagsSet.add(t)));
+    // populate filterTag and tagCloud
+    filterTag.innerHTML = '<option value="">Todas as tags</option>';
+    tagCloud.innerHTML = '';
+    Array.from(tagsSet).sort().forEach(tag => {
+      const opt = document.createElement('option'); opt.value = tag; opt.textContent = tag;
+      filterTag.appendChild(opt);
+      const chip = document.createElement('button'); chip.className='pill'; chip.textContent = tag;
+      chip.onclick = ()=>{ filterTag.value = tag; applyFiltersAndRender(); };
+      tagCloud.appendChild(chip);
     });
+  }
 
-    // ================== ESTADO / ELEMENTOS ==================
-    const grid = document.getElementById('grid'), countEl = document.getElementById('count'), pagerEl = document.getElementById('pager');
-    const searchEl = document.getElementById('search'), sortEl = document.getElementById('sort');
-    const modalBack = document.getElementById('modalBack'), modalTitle = document.getElementById('modalTitle');
-    const modalThumb = document.getElementById('modalThumb'), modalDesc = document.getElementById('modalDesc');
-    const modalModules = document.getElementById('modalModules'), modalMeta = document.getElementById('modalMeta');
-    const modalStats = document.getElementById('modalStats'), openCourseLink = document.getElementById('openCourseLink');
+  // ================= SEARCH / FILTER / SORT =================
+  function applyFiltersAndRender(){
+    // build filtered list
+    const q = (searchEl.value || '').trim().toLowerCase();
+    const nivel = (filterNivel.value || '').trim();
+    const tag = (filterTag.value || '').trim();
+    const sortBy = (sortEl.value || 'new');
+    let list = cursos.slice();
 
-    let cursos = []; let page = 1, perPage = 8;
-
-    // toast helper
-    function toast(msg, time=2000){ const d=document.createElement('div'); d.textContent=msg; d.style.cssText="position:fixed;right:18px;bottom:18px;background:#111;padding:12px 16px;border-radius:10px;color:white;z-index:200"; document.body.appendChild(d); setTimeout(()=>d.style.opacity='0',time); setTimeout(()=>d.remove(),time+420); }
-
-    function formatDate(ts){ try{return new Date(ts).toLocaleDateString();}catch(e){return '-'} }
-
-    // ================== LISTEN / READ cursos ==================
-    db.ref('cursos').on('value', snapshot=>{
-      const arr = [];
-      snapshot.forEach(child=>{
-        const c = child.val();
-        c._id = child.key;
-        c.views = c.views || 0;
-        c.likes = c.likes || 0;
-        c.createdAt = c.createdAt || Date.now();
-        c.tags = c.tags || [];
-        arr.push(c);
+    // search
+    if (q){
+      list = list.filter(c => {
+        const hay = ((c.nome||'') + ' ' + (c.descricao||'') + ' ' + (c.tags||[]).join(' ') + ' ' + (c.authorName||'')).toLowerCase();
+        return hay.includes(q);
       });
-      cursos = arr.sort((a,b)=>b.createdAt - a.createdAt);
-      render();
-    });
-
-    // ================== RENDER ==================
-    function applySearch(list){
-      const q = searchEl.value.trim().toLowerCase();
-      if (!q) return list;
-      return list.filter(c => (c.nome||'').toLowerCase().includes(q) || (c.descricao||'').toLowerCase().includes(q) || (c.tags||[]).join(' ').toLowerCase().includes(q));
-    }
-    function applySort(list){
-      const s = sortEl.value;
-      if (s==='views') return list.sort((a,b)=>b.views - a.views);
-      if (s==='likes') return list.sort((a,b)=>b.likes - a.likes);
-      if (s==='alpha') return list.sort((a,b)=> (a.nome||'').localeCompare(b.nome||'') );
-      return list.sort((a,b)=>b.createdAt - a.createdAt);
     }
 
-    function render(){
-      let list = cursos.slice();
-      list = applySearch(list);
-      list = applySort(list);
+    // nivel filter
+    if (nivel) list = list.filter(c => (c.nivel || '').toLowerCase() === nivel.toLowerCase());
 
-      countEl.textContent = list.length + ' cursos';
-      const total = Math.max(1, Math.ceil(list.length / perPage));
-      if (page > total) page = total;
-      const start = (page-1)*perPage;
-      const items = list.slice(start, start+perPage);
+    // tag filter
+    if (tag) list = list.filter(c => (c.tags||[]).includes(tag));
 
-      grid.innerHTML = '';
-      items.forEach(c=>{
-        const card = document.createElement('div'); card.className='card';
+    // sort
+    if (sortBy === 'views') list.sort((a,b)=> (b.views||0)-(a.views||0));
+    else if (sortBy === 'likes') list.sort((a,b)=> (b.likes||0)-(a.likes||0));
+    else if (sortBy === 'rating') list.sort((a,b)=> (b.avgRating||0)-(a.avgRating||0));
+    else if (sortBy === 'alpha') list.sort((a,b)=> (a.nome||'').localeCompare(b.nome||''));
+    else list.sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+
+    filtered = list;
+    page = 1;
+    render();
+  }
+
+  const debouncedFilter = debounce(applyFiltersAndRender, 350);
+  searchEl.addEventListener('input', debouncedFilter);
+  filterTag.addEventListener('change', applyFiltersAndRender);
+  filterNivel.addEventListener('change', applyFiltersAndRender);
+  sortEl.addEventListener('change', applyFiltersAndRender);
+
+  // ================= RENDER =================
+  function render(){
+    // pagination
+    const total = Math.max(1, Math.ceil(filtered.length / perPage));
+    if (page > total) page = total;
+    const start = (page-1)*perPage;
+    const items = filtered.slice(start, start+perPage);
+
+    grid.innerHTML = '';
+    // ensure intersection observer for lazy images
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver(onIntersection, {rootMargin: '120px', threshold: 0.1});
+
+    if (!items.length){
+      grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:24px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:10px">Nenhum curso encontrado.</div>';
+    } else {
+      items.forEach(c => {
+        const card = document.createElement('article'); card.className = 'card'; card.setAttribute('role','article');
         const thumb = document.createElement('div'); thumb.className='thumb';
         if (c.thumbnailUrl){
-          const img = document.createElement('img'); img.src = c.thumbnailUrl; img.alt = c.nome || 'thumb'; thumb.appendChild(img);
-        } else thumb.innerHTML = '<div style="padding:20px;color:var(--muted)">Sem imagem</div>';
+          const img = document.createElement('img');
+          img.dataset.src = c.thumbnailUrl; img.alt = c.nome || 'thumbnail'; img.loading = 'lazy';
+          img.style.opacity = '0'; img.style.transition = 'opacity .4s';
+          thumb.appendChild(img);
+          // observe for lazy load
+          observer.observe(img);
+        } else {
+          thumb.innerHTML = '<div style="padding:20px;color:var(--muted)">Sem imagem</div>';
+        }
 
-        const title = document.createElement('h3'); title.className='title'; title.textContent = c.nome || '—';
+        const title = document.createElement('h3'); title.className = 'title'; title.textContent = c.nome || '—';
         const desc = document.createElement('p'); desc.className='desc'; desc.textContent = (c.descricao||'').slice(0,140) + ((c.descricao||'').length>140 ? '…' : '');
         const meta = document.createElement('div'); meta.className='meta';
         meta.innerHTML = `<div><span class="pill" style="background:transparent;color:var(--muted);font-weight:700">${c.nivel||'—'}</span> <span style="margin-left:8px;color:var(--muted)">${(c.tags||[]).slice(0,2).join(', ')}</span></div>
@@ -246,103 +426,342 @@
         const row = document.createElement('div'); row.className='card-row';
         const openBtn = document.createElement('button'); openBtn.className='btn ghost'; openBtn.textContent = 'Ver Módulos';
         openBtn.onclick = ()=> openModalForCourse(c);
-        const stats = document.createElement('div'); stats.style.color='var(--muted)'; stats.style.fontSize='13px'; stats.textContent = `👀 ${c.views||0} • ❤️ ${c.likes||0}`;
-        row.appendChild(openBtn); row.appendChild(stats);
+        const quick = document.createElement('div'); quick.style.color='var(--muted)'; quick.style.fontSize='13px'; quick.textContent = `👀 ${c.views||0} • ❤️ ${c.likes||0} • ⭐ ${ (c.avgRating||0).toFixed(1) }`;
+        row.appendChild(openBtn); row.appendChild(quick);
 
-        card.appendChild(thumb); card.appendChild(title); card.appendChild(desc); card.appendChild(meta); card.appendChild(row);
+        // favorite heart
+        const fav = document.createElement('button'); fav.className='btn'; fav.style.padding='6px 8px'; fav.textContent = favorites[c._id] ? '★' : '☆';
+        fav.onclick = (ev) => { ev.stopPropagation(); toggleFavorite(c._id, fav); };
+
+        const actionsWrap = document.createElement('div'); actionsWrap.style.display='flex'; actionsWrap.style.gap='8px';
+        actionsWrap.appendChild(openBtn); actionsWrap.appendChild(fav);
+
+        card.appendChild(thumb); card.appendChild(title); card.appendChild(desc); card.appendChild(meta);
+        card.appendChild(row);
         grid.appendChild(card);
       });
+    }
 
-      // pager
-      pagerEl.innerHTML = '';
-      if (total > 1){
-        if (page > 1){ const p=document.createElement('button'); p.className='btn ghost'; p.textContent='◀'; p.onclick = ()=>{ page--; render(); }; pagerEl.appendChild(p); }
-        for (let i=1;i<=total;i++){
-          const b=document.createElement('button'); b.className='btn ghost'; b.style.margin='0 4px'; b.textContent=i;
-          if (i===page){ b.style.background='rgba(79,70,229,0.12)'; b.style.borderColor='rgba(79,70,229,0.6)'; }
-          b.onclick = (function(p){ return ()=>{ page = p; render(); }; })(i);
-          pagerEl.appendChild(b);
-        }
-        if (page < total){ const n=document.createElement('button'); n.className='btn ghost'; n.textContent='▶'; n.onclick = ()=>{ page++; render(); }; pagerEl.appendChild(n); }
+    // pager render
+    pager.innerHTML = '';
+    const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+    if (totalPages > 1){
+      if (page > 1){
+        const p = document.createElement('button'); p.className='btn ghost'; p.textContent='◀'; p.onclick = ()=>{ page--; render(); };
+        pager.appendChild(p);
+      }
+      for (let i=1;i<=totalPages;i++){
+        const b = document.createElement('button'); b.className='btn ghost'; b.style.margin='0 4px'; b.textContent = i;
+        if (i===page){ b.style.background='rgba(79,70,229,0.12)'; b.style.borderColor='rgba(79,70,229,0.6)'; }
+        b.onclick = (function(p){ return ()=>{ page = p; render(); }; })(i);
+        pager.appendChild(b);
+      }
+      if (page < totalPages){
+        const n=document.createElement('button'); n.className='btn ghost'; n.textContent='▶'; n.onclick = ()=>{ page++; render(); };
+        pager.appendChild(n);
       }
     }
 
-    // ================== MODAL — mostra módulos do curso ==================
-    function openModalForCourse(c){
-      modalBack.style.display = 'flex';
-      modalTitle.textContent = c.nome || 'Curso';
-      modalThumb.innerHTML = '';
-      if (c.thumbnailUrl) modalThumb.innerHTML = `<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">`;
-      else modalThumb.innerHTML = '<div style="padding:20px;color:var(--muted)">Sem imagem</div>';
-      modalDesc.textContent = c.descricao || '';
-      modalMeta.textContent = `${c.nivel || '—'} • por ${c.authorName || 'Anônimo'} • ${formatDate(c.createdAt)}`;
-      modalStats.textContent = `👀 ${c.views||0} • ❤️ ${c.likes||0}`;
-      openCourseLink.href = c.link || '#';
-      openCourseLink.style.display = c.link ? 'inline-block' : 'none';
+    // update fav count
+    favCountEl.textContent = 'Favoritos: ' + Object.keys(favorites).length;
+  }
 
-      // fetch modules for that course
-      modalModules.innerHTML = 'Carregando módulos…';
-      db.ref(`cursos/${c._id}/modulos`).orderByChild('createdAt').once('value').then(snap=>{
-        const list = [];
-        snap.forEach(ch=>{
-          const m = ch.val(); m._id = ch.key; list.push(m);
-        });
-        list.sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
-        if (!list.length){
-          modalModules.innerHTML = '<div style="color:var(--muted)">Nenhum módulo nesse curso ainda.</div>';
-          return;
+  // IntersectionObserver handler for lazy-loading images
+  function onIntersection(entries, obs){
+    entries.forEach(entry=>{
+      if (entry.isIntersecting){
+        const img = entry.target;
+        if (img.dataset && img.dataset.src){
+          img.src = img.dataset.src;
+          img.onload = ()=> img.style.opacity = '1';
+          img.removeAttribute('data-src');
         }
-        modalModules.innerHTML = '';
-        list.forEach(m => {
-          const d = document.createElement('div'); d.className='module';
-          const title = document.createElement('h4'); title.innerHTML = `${m.titulo || 'Sem título'} <span style="font-size:12px;color:var(--muted)">${formatDate(m.createdAt||0)}</span>`;
-          const meta = document.createElement('div'); meta.className='meta';
-          meta.innerHTML = `${(m.texto||'').slice(0,220)} ${m.link ? `• 🔗 <a href="${m.link}" target="_blank" style="color:#9fb2ff">${m.link}</a>` : ''}`;
+        obs.unobserve(img);
+      }
+    });
+  }
 
-          d.appendChild(title); d.appendChild(meta);
+  // ================= MODAL (módulos + comentarios + like + favorites) =================
+  function openModalForCourse(course){
+    currentModalCourse = course;
+    modalBack.style.display = 'flex';
+    modalTitle.textContent = course.nome || 'Curso';
+    modalDesc.textContent = course.descricao || '';
+    modalMeta.textContent = `${course.nivel || '—'} • por ${course.authorName || 'Anônimo'} • ${formatDate(course.createdAt)}`;
+    modalStats.textContent = `👀 ${course.views||0} • ❤️ ${course.likes||0} • ⭐ ${(course.avgRating||0).toFixed(1)}`;
+    openCourseLink.href = course.link || '#';
+    openCourseLink.style.display = course.link ? 'inline-block' : 'none';
+    favBtn.textContent = favorites[course._id] ? '★ Favoritado' : '☆ Favoritar';
 
-          // arquivos / imagem
-          if (m.imageUrl) {
-            const imgLine = document.createElement('div'); imgLine.style.marginTop='8px';
-            imgLine.innerHTML = `<div style="margin-bottom:8px"><strong>Imagem:</strong></div><div style="height:150px;overflow:hidden;border-radius:8px;border:1px solid rgba(255,255,255,0.03)"><img src="${m.imageUrl}" style="width:100%;height:100%;object-fit:cover"></div>`;
-            d.appendChild(imgLine);
-          }
-          if (m.fileUrl) {
-            const fileLine = document.createElement('div'); fileLine.style.marginTop='8px';
-            fileLine.innerHTML = `<div class="muted">Arquivo: <a href="${m.fileUrl}" target="_blank" style="color:#9fb2ff">${m.fileUrl}</a></div>`;
-            d.appendChild(fileLine);
-          }
-          modalModules.appendChild(d);
-        });
-      }).catch(e=>{
-        modalModules.innerHTML = '<div style="color:var(--muted)">Erro ao carregar módulos.</div>';
-        console.warn(e);
+    // thumbnail
+    modalThumb.innerHTML = '';
+    if (course.thumbnailUrl){
+      modalThumb.innerHTML = `<img src="${course.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">`;
+    } else modalThumb.innerHTML = '<div style="padding:20px;color:var(--muted)">Sem imagem</div>';
+
+    // load modules
+    modalModules.innerHTML = 'Carregando módulos…';
+    db.ref(`cursos/${course._id}/modulos`).orderByChild('createdAt').once('value').then(snap=>{
+      const modules = [];
+      snap.forEach(ch=>{
+        const m = ch.val(); m._id = ch.key; modules.push(m);
       });
+      modules.sort((a,b)=> (a.createdAt||0)-(b.createdAt||0));
+      modalModules.innerHTML = '';
+      if (!modules.length) modalModules.innerHTML = '<div class="muted">Nenhum módulo neste curso.</div>';
+      else modules.forEach(m => {
+        const d = document.createElement('div'); d.className='module';
+        const title = document.createElement('h4'); title.innerHTML = `${m.titulo || 'Sem título'} <span style="font-size:12px;color:var(--muted)">${formatDate(m.createdAt||0)}</span>`;
+        const meta = document.createElement('div'); meta.className='meta';
+        meta.innerHTML = `${(m.texto||'').slice(0,220)} ${m.link ? `• 🔗 <a href="${m.link}" target="_blank" style="color:#9fb2ff">${m.link}</a>` : ''}`;
+        d.appendChild(title); d.appendChild(meta);
 
-      // incrementa views do curso (apenas contagem simples)
-      db.ref(`cursos/${c._id}/views`).set((c.views||0) + 1).catch(()=>{});
-    }
+        if (m.imageUrl){
+          const imgWrap = document.createElement('div'); imgWrap.style.marginTop='8px';
+          imgWrap.innerHTML = `<div style="height:150px;overflow:hidden;border-radius:8px;border:1px solid rgba(255,255,255,0.03)"><img src="${m.imageUrl}" style="width:100%;height:100%;object-fit:cover"></div>`;
+          d.appendChild(imgWrap);
+        }
+        if (m.fileUrl){
+          const fileLine = document.createElement('div'); fileLine.style.marginTop='8px';
+          fileLine.innerHTML = `<div class="muted">Arquivo: <a href="${m.fileUrl}" target="_blank" style="color:#9fb2ff">${m.fileUrl}</a></div>`;
+          d.appendChild(fileLine);
+        }
+        // comments count
+        const ccount = document.createElement('div'); ccount.style.marginTop='8px'; ccount.style.fontSize='13px'; ccount.style.color='var(--muted)';
+        d.appendChild(ccount);
 
-    document.getElementById('closeModal').addEventListener('click', ()=>{ modalBack.style.display='none'; });
-    modalBack.addEventListener('click', (e)=>{ if (e.target === modalBack) modalBack.style.display='none'; });
+        // fetch comments count (one-time)
+        db.ref(`cursos/${course._id}/modulos/${m._id}/comentarios`).once('value').then(snap2=>{
+          let n = 0; snap2.forEach(()=> n++);
+          ccount.textContent = `💬 ${n} comentários`;
+        }).catch(()=>{});
 
-    // like botão rápido (curtir dentro do modal)
-    // adicionei um clique duplo no modalTitle para curtir (modo rápido)
-    modalTitle.addEventListener('dblclick', ()=>{
-      const cName = modalTitle.textContent;
-      // encontra curso por nome (risco de duplicatas, mas funciona; ideal usar id — abrindo pelo objeto seria melhor)
-      const found = cursos.find(x=>x.nome === cName);
-      if (!found) { toast('Curso não encontrado para curtir.'); return; }
-      const newLikes = (found.likes||0) + 1;
-      db.ref(`cursos/${found._id}/likes`).set(newLikes).then(()=>{ toast('Obrigado pelo like!'); found.likes = newLikes; render(); }).catch(e=>toast('Erro: '+e.message));
+        modalModules.appendChild(d);
+      });
+    }).catch(e=>{
+      modalModules.innerHTML = '<div class="muted">Erro ao carregar módulos.</div>';
+      console.warn(e);
     });
 
-    // busca / sort events
-    searchEl.addEventListener('input', ()=>{ page = 1; render(); });
-    sortEl.addEventListener('change', ()=>{ page = 1; render(); });
+    // increment views (simple increment)
+    db.ref(`cursos/${course._id}/views`).set((course.views||0) + 1).catch(()=>{});
+  }
 
-    // init: small ping
-    (function init(){ db.ref('meta/lastOpen').set({ts: Date.now()}).catch(()=>{}); })();
+  closeModalBtn.addEventListener('click', ()=>{ modalBack.style.display = 'none'; currentModalCourse = null; });
+
+  // FAVORITE toggle
+  function toggleFavorite(cursoId, btnEl){
+    if (favorites[cursoId]) delete favorites[cursoId];
+    else favorites[cursoId] = true;
+    saveFavorites();
+    btnEl.textContent = favorites[cursoId] ? '★' : '☆';
+    favBtn.textContent = favorites[cursoId] ? '★ Favoritado' : '☆ Favoritar';
+    // optionally sync to firebase
+    if (user) db.ref(`favorites/${user.uid}`).set(Object.keys(favorites)).catch(()=>{});
+  }
+
+  favBtn.addEventListener('click', ()=>{
+    if (!currentModalCourse) return;
+    const id = currentModalCourse._id;
+    if (favorites[id]) delete favorites[id]; else favorites[id] = true;
+    saveFavorites();
+    favBtn.textContent = favorites[id] ? '★ Favoritado' : '☆ Favoritar';
+    if (user) db.ref(`favorites/${user.uid}`).set(Object.keys(favorites)).catch(()=>{});
+  });
+
+  // LIKE in modal
+  likeModal.addEventListener('click', ()=>{
+    if (!currentModalCourse) return;
+    const id = currentModalCourse._id;
+    const newLikes = (currentModalCourse.likes || 0) + 1;
+    db.ref(`cursos/${id}/likes`).set(newLikes).then(()=>{
+      currentModalCourse.likes = newLikes;
+      modalStats.textContent = `👀 ${currentModalCourse.views||0} • ❤️ ${newLikes} • ⭐ ${(currentModalCourse.avgRating||0).toFixed(1)}`;
+      toast('Obrigado pelo like!');
+      applyFiltersAndRender();
+    }).catch(e=>toast('Erro: '+e.message));
+  });
+
+  // COMMENTS (simple append)
+  postCommentBtn.addEventListener('click', async ()=>{
+    if (!currentModalCourse) return toast('Abra um curso para comentar.');
+    const text = commentText.value.trim();
+    if (!text) return toast('Escreva algo.');
+    try{
+      const payload = { text, createdAt: Date.now(), authorId: user ? user.uid : 'anon', authorName: user ? (user.displayName || 'Usuário') : 'Anônimo' };
+      await db.ref(`cursos/${currentModalCourse._id}/comentarios`).push(payload);
+      commentText.value = '';
+      toast('Comentário publicado.');
+      // refresh comments listing
+      loadCommentsForCourse(currentModalCourse._id);
+    }catch(e){ alert('Erro: '+e.message); }
+  });
+
+  clearCommentsBtn.addEventListener('click', async ()=>{
+    if (!currentModalCourse) return;
+    if (!confirm('Remover todos os comentários deste curso? (irreversível)')) return;
+    try{ await db.ref(`cursos/${currentModalCourse._id}/comentarios`).remove(); toast('Comentários limpos.'); loadCommentsForCourse(currentModalCourse._id); }
+    catch(e){ alert('Erro: '+e.message); }
+  });
+
+  function loadCommentsForCourse(cursoId){
+    commentsList.innerHTML = 'Carregando...';
+    db.ref(`cursos/${cursoId}/comentarios`).orderByChild('createdAt').limitToLast(200).once('value').then(snap=>{
+      commentsList.innerHTML = '';
+      snap.forEach(child => {
+        const com = child.val();
+        const div = document.createElement('div'); div.style.padding='8px'; div.style.borderBottom='1px solid rgba(255,255,255,0.02)';
+        div.innerHTML = `<div style="font-weight:700">${com.authorName||'Anônimo'} <span style="font-size:12px;color:var(--muted)">• ${formatDate(com.createdAt)}</span></div><div style="color:var(--muted);margin-top:6px">${com.text}</div>`;
+        commentsList.appendChild(div);
+      });
+      if (!commentsList.innerHTML) commentsList.innerHTML = '<div class="muted">Nenhum comentário.</div>';
+    }).catch(e=>{ commentsList.innerHTML = '<div class="muted">Erro ao carregar comentários.</div>'; console.warn(e); });
+  }
+
+  // open modal also loads comments
+  document.getElementById('modalBack').addEventListener('click', (e)=>{ if (e.target === modalBack) modalBack.style.display='none'; });
+  // when a modal opens, load comments
+  const mo = new MutationObserver((mut)=>{ if (modalBack.style.display === 'flex' && currentModalCourse) loadCommentsForCourse(currentModalCourse._id); });
+  mo.observe(modalBack, { attributes:true, subtree:true });
+
+  // ================= EXPORT CSV / IMPORT JSON =================
+  exportCsvBtn.addEventListener('click', ()=>{
+    const rows = filtered.map(c => ({
+      id: c._id,
+      nome: c.nome,
+      descricao: c.descricao,
+      tags: (c.tags||[]).join(','),
+      nivel: c.nivel,
+      createdAt: c.createdAt,
+      views: c.views || 0,
+      likes: c.likes || 0,
+      avgRating: (c.avgRating||0).toFixed(2)
+    }));
+    const csv = toCsv(rows);
+    downloadBlob(csv, 'cursos_export.csv', 'text/csv;charset=utf-8;');
+  });
+
+  importJsonEl.addEventListener('change', (ev)=>{
+    const f = ev.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (e)=> {
+      try{
+        const data = JSON.parse(e.target.result);
+        if (!Array.isArray(data)) return alert('JSON deve ser um array de cursos.');
+        // optional: push to DB (ask confirm)
+        if (!confirm('Importar ' + data.length + ' cursos para o banco de dados?')) return;
+        data.forEach(async (c)=> {
+          const payload = {
+            nome: c.nome || 'Sem nome',
+            descricao: c.descricao || '',
+            tags: (c.tags || []).slice(0,10),
+            nivel: c.nivel || 'Iniciante',
+            thumbnailUrl: c.thumbnailUrl || null,
+            authorId: user ? user.uid : 'import',
+            authorName: user ? (user.displayName || 'Importado') : 'Importado',
+            createdAt: Date.now()
+          };
+          await db.ref('cursos').push(payload);
+        });
+        toast('Importação iniciada. Aguarde sincronização.');
+      }catch(e){ alert('Erro ao ler JSON: '+e.message); }
+    };
+    reader.readAsText(f);
+  });
+
+  function toCsv(rows){
+    if (!rows.length) return '';
+    const keys = Object.keys(rows[0]);
+    const lines = [keys.join(',')];
+    rows.forEach(r => {
+      const vals = keys.map(k => {
+        const v = r[k] === null || r[k] === undefined ? '' : String(r[k]);
+        if (v.includes(',') || v.includes('"') || v.includes('\n')) return '"' + v.replace(/"/g,'""') + '"';
+        return v;
+      });
+      lines.push(vals.join(','));
+    });
+    return lines.join('\n');
+  }
+
+  function downloadBlob(content, filename, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  }
+
+  // ================= CLEAR CACHE =================
+  clearCacheBtn.addEventListener('click', ()=>{
+    if (!confirm('Limpar cache local e favoritos?')) return;
+    try{ localStorage.removeItem(IDB_KEY); localStorage.removeItem('apm_favs'); favorites = {}; saveFavorites(); toast('Cache limpo.'); }catch(e){ toast('Erro ao limpar.'); }
+  });
+
+  // ================= ONLINE / OFFLINE INDICATOR =================
+  function updateOnlineStatus(){ onlineIndicator.textContent = navigator.onLine ? 'Online' : 'Offline'; onlineIndicator.style.background = navigator.onLine ? 'rgba(99,102,241,0.12)' : 'rgba(220,38,38,0.12)'; }
+  window.addEventListener('online', updateOnlineStatus); window.addEventListener('offline', updateOnlineStatus); updateOnlineStatus();
+
+  // ================= INITIAL LOAD: try cache first then DB =================
+  (function initialLoad(){
+    const cached = cacheLoad();
+    if (cached && cached.length){
+      cursos = cached;
+      rebuildTagOptions();
+      applyFiltersAndRender();
+      toast('Carregado cache local.');
+    }
+    // DB listener will update when ready (already configured above)
+  })();
+
+  // ================= EXTRA UTILITIES (ratings, admin delete etc) =================
+  // simple rating UI hook — for demo, double-click title in card to rate 5 (just example)
+  document.addEventListener('dblclick', (e)=>{
+    const t = e.target;
+    if (t.classList && t.classList.contains('title') && confirm('Deseja avaliar este curso com 5 estrelas?')){
+      // find curso by title text (not ideal for duplicates; better open modal)
+      const found = cursos.find(c => c.nome === t.textContent);
+      if (!found) return toast('Curso não encontrado.');
+      const id = found._id;
+      const r = found.rating || {sum:0,count:0};
+      r.sum = (r.sum||0) + 5; r.count = (r.count||0) + 1;
+      db.ref(`cursos/${id}/rating`).set(r).then(()=>{ toast('Obrigado pela avaliação 5★'); });
+    }
+  });
+
+  // admin delete: if user is admin, allow deletion via long-press on card (context menu)
+  grid.addEventListener('contextmenu', (ev)=>{
+    const el = ev.target.closest('.card');
+    if (!el) return;
+    const titleEl = el.querySelector('.title');
+    if (!titleEl) return;
+    ev.preventDefault();
+    if (!isAdmin) return toast('Somente administradores podem excluir via menu.');
+    if (!confirm('Excluir curso "'+titleEl.textContent+'"?')) return;
+    // find course object by title
+    const found = cursos.find(c => c.nome === titleEl.textContent);
+    if (!found) return toast('Curso não encontrado.');
+    db.ref(`cursos/${found._id}`).remove().then(()=>{ toast('Curso removido (admin).'); }).catch(e=>toast('Erro: '+e.message));
+  });
+
+  // ================= helper: observe connectivity & periodic refresh =================
+  setInterval(()=>{ // refresh small metadata every 2 minutes
+    db.ref('meta/heartbeat').set({ts: Date.now()}).catch(()=>{});
+  }, 2*60*1000);
+
+  // ================= keyboard shortcuts =================
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === '/' && document.activeElement !== searchEl){ e.preventDefault(); searchEl.focus(); }
+    if (e.key === 'f' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); document.querySelectorAll('.card .btn')[0]?.click(); }
+  });
+
+  // ================= finish init =================
+  // expose some utilities for debugging
+  window.apm = { db, auth, loadFavorites, cacheLoad, cacheSave };
+
+  // small UX: update filter list after initial load and set placeholder counts
+  setTimeout(()=>{ applyFiltersAndRender(); }, 800);
 
   </script>
 </body>
