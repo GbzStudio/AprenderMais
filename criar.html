@@ -1,99 +1,191 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>AprenderMais — Criar Curso</title>
-  <style>
-    :root{--bg:#071226;--card:#061424;--accent:#4f46e5;--muted:#94a3b8}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#071022,#061218);padding-bottom:80px}
-    header{background:transparent;padding:18px 20px;position:sticky;top:0;backdrop-filter:blur(6px);z-index:30}
-    .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
-    .logo{background:linear-gradient(135deg,#06b6d4,var(--accent));padding:10px;border-radius:8px;font-weight:800}
-    .container{max-width:900px;margin:26px auto;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
-    h1{margin:0 0 8px}
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
-    label{display:block;margin-top:10px;font-size:13px;color:var(--muted)}
-    input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-    textarea{min-height:120px;resize:vertical}
-    .thumb-preview{height:180px;border-radius:10px;background:#081226;border:1px dashed rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .actions{display:flex;gap:10px;margin-top:12px}
-    .btn{background:var(--accent);border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-    .small{font-size:13px;color:var(--muted);margin-top:8px}
-    .my-courses{margin-top:18px}
-    .course-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);margin-bottom:8px}
-    .course-row img{width:64px;height:48px;object-fit:cover;border-radius:6px}
-    .note{font-size:13px;color:var(--muted)}
-    @media(max-width:920px){.grid{grid-template-columns:1fr}}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AprenderMais — Criar & Gerenciar Cursos</title>
+<style>
+  :root{
+    --bg:#071226; --card:#061424; --accent:#4f46e5; --muted:#94a3b8; --glass:rgba(255,255,255,0.02);
+    --radius:12px; --maxw:1100px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#071022,#061218);-webkit-font-smoothing:antialiased;padding:30px 12px;}
+  .wrap{max-width:var(--maxw);margin:0 auto}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#4f46e5);display:flex;align-items:center;justify-content:center;font-weight:800}
+  h1{margin:0;font-size:20px}
+  .note{color:var(--muted);font-size:13px;margin-top:6px}
+
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+  /* main panel */
+  .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+  label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+  textarea{min-height:110px;resize:vertical}
+  .row{display:flex;gap:8px}
+  .btn{background:var(--accent);border:none;color:white;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .small{font-size:13px;color:var(--muted);margin-top:8px}
+
+  /* right aside */
+  aside .thumb-preview{height:180px;border-radius:10px;background:#081226;border:1px dashed rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .my-courses{margin-top:14px}
+  .course-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+  .course-row img{width:64px;height:48px;object-fit:cover;border-radius:6px;flex-shrink:0}
+  .course-actions{display:flex;gap:8px}
+
+  /* module list */
+  .module{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+  .module h4{margin:0;display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .meta{color:var(--muted);font-size:13px;margin-top:6px}
+
+  .muted{color:var(--muted)}
+
+  /* file list */
+  .file-line{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01);font-size:13px;margin-top:6px}
+  .file-actions{display:flex;gap:8px}
+
+  /* tiny helpers */
+  .flex{display:flex;gap:8px;align-items:center}
+  .pill{background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:13px}
+  .danger{background:#7f1d1d}
+</style>
 </head>
 <body>
-<header><div class="nav" style="max-width:1100px;margin:0 auto"><div class="logo">AprenderMais</div><div style="margin-left:auto"><a href="index.html" class="btn btn-ghost" style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px">Voltar</a></div></div></header>
-
-<main>
-  <div class="container">
-    <h1>Criar / Editar Curso</h1>
-    <p class="note">Faça login (anônimo) para publicar. Você pode enviar uma imagem como thumbnail ou usar uma URL externa.</p>
-
-    <div class="grid">
+  <div class="wrap">
+    <header>
+      <div class="logo">AM</div>
       <div>
-        <label>Nome do curso</label>
-        <input id="nome" placeholder="Ex: Introdução ao HTML e CSS" />
+        <h1>Criar & Gerenciar Cursos — AprenderMais</h1>
+        <div class="note">Crie cursos, adicione módulos com texto, imagens e arquivos. Upload no Firebase Storage e DB em Realtime Database.</div>
+      </div>
+      <div style="margin-left:auto">
+        <a href="index.html" class="btn btn-ghost" style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px">Voltar</a>
+      </div>
+    </header>
 
-        <label>Descrição</label>
-        <textarea id="descricao" placeholder="Descreva o curso em poucas linhas"></textarea>
+    <div class="layout">
+      <!-- LEFT: create form + modules list -->
+      <div>
+        <div class="panel" id="createPanel">
+          <h3 id="panelTitle">Novo curso</h3>
 
-        <label>Tags (separadas por vírgula)</label>
-        <input id="tags" placeholder="ex: web,frontend,html"/>
+          <label>Nome do curso</label>
+          <input id="nome" placeholder="Ex: Introdução ao HTML e CSS" />
 
-        <label>Nível</label>
-        <select id="nivel">
-          <option>Iniciante</option>
-          <option>Intermediário</option>
-          <option>Avançado</option>
-        </select>
+          <label>Descrição</label>
+          <textarea id="descricao" placeholder="Descrição breve do curso"></textarea>
 
-        <label>Link externo / URL do curso (opcional)</label>
-        <input id="link" placeholder="https://..." />
+          <label>Tags (separadas por vírgula)</label>
+          <input id="tags" placeholder="web,frontend,html">
 
-        <div class="actions">
-          <button id="salvar" class="btn">Publicar Curso</button>
-          <button id="limpar" class="btn ghost">Limpar</button>
+          <label>Nível</label>
+          <select id="nivel"><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select>
+
+          <label>Link externo (opcional)</label>
+          <input id="link" placeholder="https://...">
+
+          <label>Thumbnail (arquivo ou URL)</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="file" id="thumbFile" accept="image/*" />
+            <input id="thumbUrl" placeholder="Ou cole uma URL de imagem" style="flex:1" />
+          </div>
+
+          <div class="row" style="margin-top:12px">
+            <button id="salvarCurso" class="btn">Publicar Curso</button>
+            <button id="renomearCurso" class="btn ghost">Renomear</button>
+            <button id="limparCurso" class="btn ghost">Limpar</button>
+          </div>
+
+          <div id="cursoStatus" class="small"></div>
         </div>
 
-        <div class="small" id="statusInfo" style="margin-top:10px"></div>
+        <!-- Modules panel (aparece quando curso selecionado) -->
+        <div class="panel" id="modulesPanel" style="margin-top:14px;display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Módulos do curso</h3>
+            <div class="flex">
+              <button id="addModuleBtn" class="btn">+ Novo módulo</button>
+              <button id="closeModules" class="btn ghost">Fechar</button>
+            </div>
+          </div>
 
-        <hr style="margin:16px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-
-        <div class="my-courses">
-          <h3>Seus cursos (publicados por você)</h3>
-          <div id="myList">Carregando…</div>
+          <div id="modulesList" style="margin-top:12px"></div>
         </div>
       </div>
 
+      <!-- RIGHT: preview, my courses -->
       <aside>
-        <label>Thumbnail (arquivo)</label>
-        <div class="thumb-preview" id="thumbPreview">Nenhuma imagem</div>
-        <input type="file" id="thumbFile" accept="image/*" style="margin-top:8px" />
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:13px;color:var(--muted)">Thumbnail preview</div>
+              <div class="small muted">Upload ou URL será mostrado aqui</div>
+            </div>
+          </div>
+          <div class="thumb-preview" id="thumbPreview" style="margin-top:10px">Nenhuma imagem</div>
+          <div style="margin-top:10px" class="small">Tamanho máximo sugerido: 1280×720 • Tipos: jpg, png</div>
+        </div>
 
-        <label style="margin-top:8px">Ou use uma URL de imagem</label>
-        <input id="thumbUrl" placeholder="https://..." />
-
-        <div class="small">Tamanho máximo sugerido: 1280×720 • Tipos: jpg, png</div>
+        <div class="panel" style="margin-top:12px">
+          <h3>Seus cursos</h3>
+          <div id="myList" class="my-courses">Carregando…</div>
+        </div>
       </aside>
     </div>
   </div>
-</main>
 
-<!-- Firebase libs -->
+  <!-- modal simples para criar/editar módulo -->
+  <div id="moduleModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));z-index:90;padding:18px">
+    <div style="width:900px;max-width:100%;background:linear-gradient(180deg,#071224,#061622);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04);color:#e6eef8">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modTitle">Novo módulo</strong>
+        <div style="display:flex;gap:8px">
+          <button id="saveModule" class="btn">Salvar</button>
+          <button id="cancelModule" class="btn ghost">Cancelar</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px">
+        <div>
+          <label>Título do módulo</label>
+          <input id="modNome" placeholder="Ex: Aula 1 — Conceitos básicos">
+
+          <label>Conteúdo (texto)</label>
+          <textarea id="modTexto" placeholder="Conteúdo do módulo (ou deixe vazio e faça upload de .txt)"></textarea>
+
+          <label>Ou faça upload de um arquivo de texto (.txt) — será salvo no Storage</label>
+          <input type="file" id="modFile" accept=".txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/*" />
+
+          <label style="margin-top:8px">Link opcional (vídeo, drive etc)</label>
+          <input id="modLink" placeholder="https://...">
+        </div>
+
+        <div>
+          <label>Imagem do módulo (upload ou URL)</label>
+          <input type="file" id="modImageFile" accept="image/*" />
+          <input id="modImageUrl" placeholder="Ou cole URL da imagem" style="margin-top:8px" />
+          <div style="margin-top:8px" class="thumb-preview" id="modImagePreview">Nenhuma imagem</div>
+
+          <label style="margin-top:10px">Arquivo extra (upload) — PDF, ZIP, MP4, etc</label>
+          <input type="file" id="modExtraFile" />
+          <div id="modFileList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Firebase compat libs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <script>
+/* =========== FIREBASE CONFIG =========== */
 const firebaseConfig = {
   apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
   authDomain: "fir-auth-3521c.firebaseapp.com",
@@ -107,157 +199,426 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth(), db = firebase.database(), storage = firebase.storage();
 
+/* =========== AUTENTICAÇÃO (ANÔNIMA) =========== */
 let me = null;
-auth.onAuthStateChanged(u=>{
-  me = u;
-  if (!u) {
-    // auto sign in anonymously
+auth.onAuthStateChanged(user=>{
+  me = user;
+  if (!user) {
     auth.signInAnonymously().catch(e=>console.warn(e));
   } else {
     loadMyCourses();
   }
 });
 
-/* elementos */
-const nomeEl = document.getElementById('nome');
-const descEl = document.getElementById('descricao');
-const tagsEl = document.getElementById('tags');
-const nivelEl = document.getElementById('nivel');
-const linkEl = document.getElementById('link');
-const thumbFileEl = document.getElementById('thumbFile');
-const thumbUrlEl = document.getElementById('thumbUrl');
-const thumbPreview = document.getElementById('thumbPreview');
-const salvarBtn = document.getElementById('salvar');
-const limparBtn = document.getElementById('limpar');
-const statusInfo = document.getElementById('statusInfo');
+/* =========== ELEMENTS =========== */
+const nomeEl = document.getElementById('nome'), descEl = document.getElementById('descricao'), tagsEl = document.getElementById('tags');
+const nivelEl = document.getElementById('nivel'), linkEl = document.getElementById('link');
+const thumbFileEl = document.getElementById('thumbFile'), thumbUrlEl = document.getElementById('thumbUrl'), thumbPreview = document.getElementById('thumbPreview');
+const salvarCursoBtn = document.getElementById('salvarCurso'), limparCursoBtn = document.getElementById('limparCurso'), renomearBtn = document.getElementById('renomearCurso');
+const cursoStatus = document.getElementById('cursoStatus');
 const myList = document.getElementById('myList');
+const modulesPanel = document.getElementById('modulesPanel'), modulesList = document.getElementById('modulesList'), addModuleBtn = document.getElementById('addModuleBtn'), closeModules = document.getElementById('closeModules');
+const panelTitle = document.getElementById('panelTitle');
 
-let editId = null; // se editar curso existente
+// modal module
+const moduleModal = document.getElementById('moduleModal'), modTitle = document.getElementById('modTitle');
+const modNome = document.getElementById('modNome'), modTexto = document.getElementById('modTexto');
+const modFile = document.getElementById('modFile'), modImageFile = document.getElementById('modImageFile'), modImageUrl = document.getElementById('modImageUrl'), modImagePreview = document.getElementById('modImagePreview'), modExtraFile = document.getElementById('modExtraFile'), modFileList = document.getElementById('modFileList');
+const saveModuleBtn = document.getElementById('saveModule'), cancelModuleBtn = document.getElementById('cancelModule');
 
+/* =========== STATE =========== */
+let editCourseId = null; // id do curso sendo editado/selecionado
+let editModuleId = null; // se editar um módulo
+let moduleTempFiles = {}; // para armazenar File objects temporariamente
+
+/* =========== HELPERS =========== */
+function toast(msg, t=2500){ const d = document.createElement('div'); d.textContent = msg; d.style.cssText="position:fixed;right:18px;bottom:18px;background:#111;padding:12px 16px;border-radius:10px;color:white;z-index:120;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 30px rgba(2,6,23,0.6)"; document.body.appendChild(d); setTimeout(()=>d.style.opacity='0',t); setTimeout(()=>d.remove(),t+400); }
+
+function formatDate(ts){ try{ return new Date(ts).toLocaleString(); }catch(e){return '-'} }
+
+/* preview thumb */
 thumbFileEl.addEventListener('change', ()=>{
   const f = thumbFileEl.files[0];
-  if (!f) { thumbPreview.innerHTML='Nenhuma imagem'; return; }
-  const url = URL.createObjectURL(f);
-  thumbPreview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">`;
+  if (!f){ if (!thumbUrlEl.value) thumbPreview.innerHTML='Nenhuma imagem'; return; }
+  const u = URL.createObjectURL(f);
+  thumbPreview.innerHTML = `<img src="${u}" style="width:100%;height:100%;object-fit:cover">`;
 });
-
 thumbUrlEl.addEventListener('input', ()=>{
   const v = thumbUrlEl.value.trim();
-  if (!v) { thumbPreview.innerHTML='Nenhuma imagem'; return; }
+  if (!v){ if (!thumbFileEl.files.length) thumbPreview.innerHTML='Nenhuma imagem'; return; }
   thumbPreview.innerHTML = `<img src="${v}" style="width:100%;height:100%;object-fit:cover">`;
 });
 
-limparBtn.addEventListener('click', ()=>{ nomeEl.value=''; descEl.value=''; tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFileEl.value=''; thumbUrlEl.value=''; thumbPreview.innerHTML='Nenhuma imagem'; statusInfo.textContent=''; editId=null; });
-
-/* salvar curso: upload de thumb se necessário */
-salvarBtn.addEventListener('click', async ()=>{
+/* =========== CRUD: Cursos =========== */
+async function saveCourse(){
   const nome = nomeEl.value.trim();
   const descricao = descEl.value.trim();
   const tags = tagsEl.value.split(',').map(s=>s.trim()).filter(Boolean);
   const nivel = nivelEl.value;
   const link = linkEl.value.trim();
-  if (!nome || !descricao) { alert('Preencha nome e descrição'); return; }
+  if (!nome || !descricao){ alert('Preencha nome e descrição.'); return; }
   if (!me) { alert('Aguarde autenticação...'); return; }
 
-  salvarBtn.disabled = true; statusInfo.textContent = 'Salvando...';
+  salvarCursoBtn.disabled = true; cursoStatus.textContent = 'Salvando curso...';
 
-  try {
+  try{
+    // thumbnail: prioriza upload, senão usa URL, senão null
     let thumbnailUrl = thumbUrlEl.value.trim() || null;
-    if (thumbFileEl.files.length > 0) {
-      const file = thumbFileEl.files[0];
-      const path = `thumbnails/${me.uid}/${Date.now()}_${file.name}`;
+    if (thumbFileEl.files.length > 0){
+      const f = thumbFileEl.files[0];
+      const path = `thumbnails/${me.uid}/${Date.now()}_${f.name}`;
       const ref = storage.ref().child(path);
-      await ref.put(file);
+      await ref.put(f);
       thumbnailUrl = await ref.getDownloadURL();
     }
 
     const payload = {
-      nome,
-      descricao,
-      tags,
-      nivel,
-      link,
+      nome, descricao, tags, nivel, link,
       thumbnailUrl: thumbnailUrl || null,
       authorId: me.uid,
       authorName: 'Anônimo',
-      createdAt: Date.now(),
-      views: 0,
-      likes: 0
+      createdAt: Date.now()
     };
 
-    if (editId) {
-      await db.ref(`cursos/${editId}`).update(payload);
-      toast('Curso atualizado!');
-    } else {
-      const ref = db.ref('cursos').push();
-      await ref.set(payload);
-      toast('Curso publicado com sucesso!');
-    }
-
-    limparBtn.click();
+    // cria novo curso
+    const ref = db.ref('cursos').push();
+    await ref.set(payload);
+    toast('Curso criado! Agora adicione módulos na lista.');
     loadMyCourses();
+    // limpa campos básicos (mantém para facilitar criar outro)
+    nomeEl.value=''; descricaoEl='';
+    tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFileEl.value=''; thumbUrlEl.value=''; thumbPreview.innerHTML='Nenhuma imagem';
+  }catch(e){ console.error(e); alert('Erro ao salvar curso: '+e.message); }
+  finally{ salvarCursoBtn.disabled = false; cursoStatus.textContent = ''; }
+}
 
-  } catch(e){
-    console.error(e);
-    alert('Erro ao salvar: '+e.message);
-  } finally {
-    salvarBtn.disabled = false; statusInfo.textContent = '';
-  }
+salvarCursoBtn.addEventListener('click', saveCourse);
+
+/* RENOMEAR */
+renomearBtn.addEventListener('click', async ()=>{
+  if (!editCourseId) { alert('Selecione um curso da lista "Seus cursos" para renomear.'); return; }
+  const novo = prompt('Novo nome do curso:');
+  if (!novo) return;
+  try{
+    await db.ref(`cursos/${editCourseId}`).update({ nome: novo });
+    toast('Curso renomeado.');
+    loadMyCourses();
+  }catch(e){ alert('Erro: '+e.message) }
 });
 
-/* lista dos meus cursos */
+/* Limpar campos */
+limparCursoBtn.addEventListener('click', ()=>{ nomeEl.value=''; descEl.value=''; tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFileEl.value=''; thumbUrlEl.value=''; thumbPreview.innerHTML='Nenhuma imagem'; editCourseId=null; modulesPanel.style.display='none'; panelTitle.textContent='Novo curso'; });
+
+/* Carrega cursos do usuário (me.uid) */
 function loadMyCourses(){
   if (!me) return;
   db.ref('cursos').orderByChild('authorId').equalTo(me.uid).on('value', snap=>{
-    const html = [];
+    const arr = [];
     snap.forEach(child=>{
       const c = child.val(); c._id = child.key;
-      html.push(c);
+      arr.push(c);
     });
-    if (!html.length) { myList.innerHTML = '<div class="note">Você ainda não publicou cursos.</div>'; return; }
-    myList.innerHTML = '';
-    html.forEach(c=>{
-      const row = document.createElement('div'); row.className='course-row';
-      const img = document.createElement('img'); img.src = c.thumbnailUrl || '';
-      row.appendChild(img);
-      const info = document.createElement('div'); info.style.flex='1';
-      info.innerHTML = `<div style="font-weight:700">${c.nome}</div><div style="font-size:13px;color:#94a3b8">${(c.tags||[]).join(', ')}</div>`;
-      row.appendChild(info);
-      const actions = document.createElement('div');
-      const edit = document.createElement('button'); edit.className='btn ghost'; edit.textContent='Editar';
-      edit.onclick = ()=> loadForEdit(c);
-      const del = document.createElement('button'); del.className='btn'; del.style.background='#dc2626'; del.textContent='Excluir';
-      del.onclick = ()=> removeCourse(c._id);
-      actions.appendChild(edit); actions.appendChild(del);
-      row.appendChild(actions);
-      myList.appendChild(row);
-    });
+    renderMyCourses(arr);
   });
 }
 
-function loadForEdit(c){
-  editId = c._id;
-  nomeEl.value = c.nome || '';
-  descEl.value = c.descricao || '';
-  tagsEl.value = (c.tags||[]).join(', ');
-  nivelEl.value = c.nivel || 'Iniciante';
-  linkEl.value = c.link || '';
-  thumbUrlEl.value = c.thumbnailUrl || '';
-  thumbPreview.innerHTML = c.thumbnailUrl ? `<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">` : 'Nenhuma imagem';
-  window.scrollTo({top:0,behavior:'smooth'});
+function renderMyCourses(arr){
+  myList.innerHTML = '';
+  if (!arr.length) { myList.innerHTML = '<div class="muted small">Você ainda não publicou cursos.</div>'; return; }
+  // ordenar por createdAt desc
+  arr.sort((a,b)=>b.createdAt - a.createdAt);
+  arr.forEach(c=>{
+    const row = document.createElement('div'); row.className='course-row';
+    const img = document.createElement('img'); img.src = c.thumbnailUrl || '';
+    row.appendChild(img);
+
+    const info = document.createElement('div'); info.style.flex='1';
+    info.innerHTML = `<div style="font-weight:700">${c.nome}</div><div class="muted">${(c.tags||[]).join(', ')} • ${c.nivel}</div><div class="muted" style="font-size:12px;margin-top:6px">Criado: ${formatDate(c.createdAt||0)}</div>`;
+    row.appendChild(info);
+
+    const actions = document.createElement('div'); actions.className='course-actions';
+    const manage = document.createElement('button'); manage.className='btn ghost'; manage.textContent='Gerenciar';
+    manage.onclick = ()=> openCourse(c._id, c);
+    const edit = document.createElement('button'); edit.className='btn ghost'; edit.textContent='Editar (abrir)';
+    edit.onclick = ()=> loadCourseToEdit(c._id, c);
+    const del = document.createElement('button'); del.className='btn'; del.style.background='#dc2626'; del.textContent='Excluir';
+    del.onclick = ()=> removeCourse(c._id);
+    actions.appendChild(manage); actions.appendChild(edit); actions.appendChild(del);
+    row.appendChild(actions);
+
+    myList.appendChild(row);
+  });
 }
 
+/* abrir painel de módulos para curso */
+function openCourse(id, courseObj){
+  editCourseId = id;
+  modulesPanel.style.display = 'block';
+  panelTitle.textContent = 'Editando: ' + (courseObj?.nome || id);
+  loadModulesForCourse(id);
+  // preenche campos básicos com dados do curso (para possível editar)
+  db.ref(`cursos/${id}`).once('value').then(snap=>{
+    const c = snap.val() || {};
+    nomeEl.value = c.nome || '';
+    descEl.value = c.descricao || '';
+    tagsEl.value = (c.tags||[]).join(', ');
+    nivelEl.value = c.nivel || 'Iniciante';
+    linkEl.value = c.link || '';
+    if (c.thumbnailUrl) { thumbPreview.innerHTML = `<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">`; }
+  });
+}
+
+/* carregar curso para editar como formulário principal (abre mesmo sem módulos) */
+function loadCourseToEdit(id, courseObj){
+  editCourseId = id;
+  panelTitle.textContent = 'Editando (salvando aqui não altera módulos): ' + (courseObj?.nome||id);
+  // preenche campos
+  db.ref(`cursos/${id}`).once('value').then(snap=>{
+    const c = snap.val() || {};
+    nomeEl.value = c.nome || '';
+    descEl.value = c.descricao || '';
+    tagsEl.value = (c.tags||[]).join(', ');
+    nivelEl.value = c.nivel || 'Iniciante';
+    linkEl.value = c.link || '';
+    if (c.thumbnailUrl) { thumbPreview.innerHTML = `<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">`; }
+  });
+}
+
+/* remover curso (apaga módulos também) */
 async function removeCourse(id){
-  if (!confirm('Excluir esse curso permanentemente?')) return;
-  try {
+  if (!confirm('Excluir este curso e todos os módulos permanentemente?')) return;
+  try{
     await db.ref(`cursos/${id}`).remove();
     toast('Curso excluído.');
-  } catch(e){ alert('Erro: '+e.message) }
+    if (editCourseId === id){ editCourseId = null; modulesPanel.style.display='none'; panelTitle.textContent='Novo curso'; }
+  }catch(e){ alert('Erro ao excluir: '+e.message) }
 }
 
-/* toast simples */
-function toast(msg){ const d=document.createElement('div'); d.textContent=msg; d.style.cssText="position:fixed;right:16px;bottom:16px;background:#111;padding:10px 12px;border-radius:8px;color:white;z-index:120"; document.body.appendChild(d); setTimeout(()=>d.remove(),2200); }
+/* Atualizar curso (se quiser salvar edições no formulário para o curso selecionado) */
+async function updateCourseFromForm(){
+  if (!editCourseId){ alert('Nenhum curso selecionado para atualizar. Use "Gerenciar" em um curso da lista.'); return; }
+  try{
+    const nome = nomeEl.value.trim(), descricao = descEl.value.trim(), tags = tagsEl.value.split(',').map(s=>s.trim()).filter(Boolean), nivel = nivelEl.value, link = linkEl.value.trim();
+    let thumbnailUrl = thumbUrlEl.value.trim() || null;
+    if (thumbFileEl.files.length > 0){
+      const f = thumbFileEl.files[0];
+      const path = `thumbnails/${me.uid}/${Date.now()}_${f.name}`;
+      const ref = storage.ref().child(path);
+      await ref.put(f);
+      thumbnailUrl = await ref.getDownloadURL();
+    }
+    const payload = { nome, descricao, tags, nivel, link };
+    if (thumbnailUrl) payload.thumbnailUrl = thumbnailUrl;
+    await db.ref(`cursos/${editCourseId}`).update(payload);
+    toast('Curso atualizado.');
+    loadMyCourses();
+  }catch(e){ alert('Erro: '+e.message) }
+}
 
+/* salvar curso existente quando usuário clica "Publicar Curso" e editCourseId está definido:
+   manter comportamento: se editCourseId definido -> atualiza ao invés de criar novo */
+salvarCursoBtn.addEventListener('click', async (ev)=>{
+  if (editCourseId){
+    // update instead of create
+    ev.stopPropagation();
+    await updateCourseFromForm();
+    return;
+  }
+  // normal create (handled earlier)
+});
+
+/* =========== MÓDULOS: CRUD =========== */
+let currentModuleList = []; // cache
+
+function loadModulesForCourse(courseId){
+  modulesList.innerHTML = 'Carregando módulos...';
+  db.ref(`cursos/${courseId}/modulos`).orderByChild('createdAt').on('value', snap=>{
+    const list = [];
+    snap.forEach(child=>{ const m = child.val(); m._id = child.key; list.push(m); });
+    // ordenar por createdAt asc
+    list.sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
+    currentModuleList = list;
+    renderModules(list);
+  });
+}
+
+function renderModules(list){
+  modulesList.innerHTML = '';
+  if (!list.length) { modulesList.innerHTML = '<div class="muted">Nenhum módulo ainda. Clique em "+ Novo módulo".</div>'; return; }
+  list.forEach((m, idx)=>{
+    const d = document.createElement('div'); d.className='module';
+    d.innerHTML = `<h4>${(m.titulo||'Sem título')}
+        <span style="font-size:13px;color:var(--muted)">${formatDate(m.createdAt||0)}</span>
+      </h4>
+      <div class="meta">${(m.texto||'')} ${m.link ? ' • 🔗 <a href="'+m.link+'" target="_blank" style="color:#9fb2ff">'+m.link+'</a>':''}</div>`;
+
+    // files summary
+    const filesDiv = document.createElement('div'); filesDiv.style.marginTop='8px';
+    if (m.imageUrl) filesDiv.innerHTML += `<div class="file-line"><div>Imagem</div><div class="file-actions"><a href="${m.imageUrl}" target="_blank" class="pill">Abrir</a></div></div>`;
+    if (m.fileUrl) filesDiv.innerHTML += `<div class="file-line"><div>Arquivo</div><div class="file-actions"><a href="${m.fileUrl}" target="_blank" class="pill">Abrir</a></div></div>`;
+    if (!m.imageUrl && !m.fileUrl) filesDiv.innerHTML = '<div class="muted small">Sem arquivos</div>';
+    d.appendChild(filesDiv);
+
+    // actions: edit, delete, move up/down
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
+    const editBtn = document.createElement('button'); editBtn.className='btn ghost'; editBtn.textContent='Editar';
+    editBtn.onclick = ()=> openModuleEditor(m._id, m);
+    const delBtn = document.createElement('button'); delBtn.className='btn'; delBtn.style.background='#dc2626'; delBtn.textContent='Excluir';
+    delBtn.onclick = ()=> deleteModule(m._id);
+    const upBtn = document.createElement('button'); upBtn.className='btn ghost'; upBtn.textContent='▲';
+    const downBtn = document.createElement('button'); downBtn.className='btn ghost'; downBtn.textContent='▼';
+    upBtn.onclick = ()=> swapModulePosition(idx, idx-1);
+    downBtn.onclick = ()=> swapModulePosition(idx, idx+1);
+    actions.appendChild(editBtn); actions.appendChild(delBtn); actions.appendChild(upBtn); actions.appendChild(downBtn);
+    d.appendChild(actions);
+
+    modulesList.appendChild(d);
+  });
+}
+
+/* adicionar módulo - abre modal */
+addModuleBtn.addEventListener('click', ()=>{
+  if (!editCourseId){ alert('Selecione um curso (Gerenciar) antes de adicionar módulos.'); return; }
+  editModuleId = null;
+  openModuleModal();
+});
+
+/* fecha painel módulos */
+closeModules.addEventListener('click', ()=>{ modulesPanel.style.display='none'; editCourseId=null; panelTitle.textContent='Novo curso'; });
+
+/* abrir modal para novo/editar módulo */
+function openModuleModal(){
+  moduleModal.style.display = 'flex';
+  modTitle.textContent = editModuleId ? 'Editar módulo' : 'Novo módulo';
+  // limpar campos
+  modNome.value = ''; modTexto.value = ''; modFile.value=''; modImageFile.value=''; modImageUrl.value=''; modImagePreview.innerHTML='Nenhuma imagem'; modExtraFile.value=''; modFileList.innerHTML='';
+  moduleTempFiles = {};
+  if (editModuleId){
+    // carregar dados do módulo
+    db.ref(`cursos/${editCourseId}/modulos/${editModuleId}`).once('value').then(snap=>{
+      const m = snap.val() || {};
+      modNome.value = m.titulo||'';
+      modTexto.value = m.texto||'';
+      modImageUrl.value = m.imageUrl || '';
+      if (m.imageUrl) modImagePreview.innerHTML = `<img src="${m.imageUrl}" style="width:100%;height:100%;object-fit:cover">`;
+      if (m.fileUrl) modFileList.innerHTML = `<div class="file-line"><div>Arquivo salvo</div><div class="file-actions"><a href="${m.fileUrl}" target="_blank" class="pill">Abrir</a></div></div>`;
+      if (m.link) document.getElementById('modLink').value = m.link || '';
+    });
+  }
+}
+
+/* fechar modal */
+cancelModuleBtn.addEventListener('click', ()=>{ moduleModal.style.display='none'; editModuleId=null; moduleTempFiles={}; });
+
+/* previews de módulos */
+modImageFile.addEventListener('change', ()=>{
+  const f = modImageFile.files[0];
+  if (!f){ if (!modImageUrl.value) modImagePreview.innerHTML='Nenhuma imagem'; return; }
+  moduleTempFiles.image = f;
+  const u = URL.createObjectURL(f);
+  modImagePreview.innerHTML = `<img src="${u}" style="width:100%;height:100%;object-fit:cover">`;
+});
+modImageUrl.addEventListener('input', ()=>{ const v = modImageUrl.value.trim(); if (!v){ if (!moduleTempFiles.image) modImagePreview.innerHTML='Nenhuma imagem'; return; } modImagePreview.innerHTML = `<img src="${v}" style="width:100%;height:100%;object-fit:cover">`; });
+
+modFile.addEventListener('change', ()=>{ if (modFile.files.length) { moduleTempFiles.textFile = modFile.files[0]; modFileList.innerHTML = `<div class="file-line"><div>${modFile.files[0].name}</div><div class="file-actions"><span class="pill">Pronto para upload</span></div></div>`;} });
+modExtraFile.addEventListener('change', ()=>{ if (modExtraFile.files.length) { moduleTempFiles.extraFile = modExtraFile.files[0]; modFileList.innerHTML += `<div class="file-line"><div>${modExtraFile.files[0].name}</div><div class="file-actions"><span class="pill">Pronto para upload</span></div></div>`;} });
+
+/* salvar módulo (upload arquivos se houver) */
+saveModuleBtn.addEventListener('click', async ()=>{
+  const titulo = modNome.value.trim();
+  const texto = modTexto.value.trim();
+  const link = document.getElementById('modLink').value.trim();
+  if (!titulo && !texto && !moduleTempFiles.textFile){ alert('Informe pelo menos um título ou conteúdo (ou faça upload de um arquivo).'); return; }
+  if (!editCourseId){ alert('Curso não selecionado.'); return; }
+
+  saveModuleBtn.disabled = true;
+  saveModuleBtn.textContent = 'Salvando...';
+  try{
+    const newModule = { titulo, texto, link, createdAt: Date.now() };
+
+    // upload image
+    if (moduleTempFiles.image){
+      const f = moduleTempFiles.image;
+      const path = `modules/${me.uid}/${editCourseId}/images/${Date.now()}_${f.name}`;
+      const ref = storage.ref().child(path);
+      await ref.put(f);
+      newModule.imageUrl = await ref.getDownloadURL();
+    } else if (modImageUrl.value.trim()){
+      newModule.imageUrl = modImageUrl.value.trim();
+    }
+
+    // upload text file (if any)
+    if (moduleTempFiles.textFile){
+      const f = moduleTempFiles.textFile;
+      const path = `modules/${me.uid}/${editCourseId}/files/${Date.now()}_${f.name}`;
+      const ref = storage.ref().child(path);
+      await ref.put(f);
+      newModule.fileUrl = await ref.getDownloadURL();
+    }
+
+    // extra file
+    if (moduleTempFiles.extraFile){
+      const f = moduleTempFiles.extraFile;
+      const path = `modules/${me.uid}/${editCourseId}/extras/${Date.now()}_${f.name}`;
+      const ref = storage.ref().child(path);
+      await ref.put(f);
+      newModule.extraFileUrl = await ref.getDownloadURL();
+    }
+
+    if (editModuleId){
+      // update existing
+      await db.ref(`cursos/${editCourseId}/modulos/${editModuleId}`).update(newModule);
+      toast('Módulo atualizado.');
+    } else {
+      // push new
+      await db.ref(`cursos/${editCourseId}/modulos`).push(newModule);
+      toast('Módulo criado.');
+    }
+
+    moduleModal.style.display = 'none';
+    moduleTempFiles = {};
+    // recarregamento via listener
+  }catch(e){ console.error(e); alert('Erro ao salvar módulo: '+e.message); }
+  finally{ saveModuleBtn.disabled = false; saveModuleBtn.textContent = 'Salvar'; }
+});
+
+/* abrir módulo no editor */
+function openModuleEditor(moduleId, moduleObj){
+  editModuleId = moduleId;
+  openModuleModal();
+  // após abertura, os campos serão preenchidos via load no openModuleModal
+}
+
+/* deletar módulo */
+async function deleteModule(modId){
+  if (!confirm('Excluir este módulo?')) return;
+  try{
+    await db.ref(`cursos/${editCourseId}/modulos/${modId}`).remove();
+    toast('Módulo removido.');
+  }catch(e){ alert('Erro: '+e.message) }
+}
+
+/* trocar posição (simples): reescreve createdAt para forçar ordem.
+   Nota: Realtime DB não tem "position" nativo; aqui usamos createdAt manualmente. */
+async function swapModulePosition(i1, i2){
+  if (i2 < 0 || i2 >= currentModuleList.length) return;
+  const m1 = currentModuleList[i1], m2 = currentModuleList[i2];
+  if (!m1 || !m2) return;
+  try{
+    // swap their createdAt timestamps
+    const t1 = m1.createdAt || Date.now();
+    const t2 = m2.createdAt || Date.now();
+    await db.ref(`cursos/${editCourseId}/modulos/${m1._id}/createdAt`).set(t2);
+    await db.ref(`cursos/${editCourseId}/modulos/${m2._id}/createdAt`).set(t1);
+    toast('Ordem atualizada.');
+  }catch(e){ console.warn(e); }
+}
+
+/* =========== Inicialização =========== */
+(function init(){
+  // Garantir regras: não mexe nos dados, apenas listener para ver se funciona
+  db.ref('meta/lastOpen').set({ts: Date.now()}).catch(()=>{});
+})();
 </script>
 </body>
 </html>
