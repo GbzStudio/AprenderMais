@@ -3,459 +3,793 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AprenderMais — Criar Cursos (Login + Google)</title>
-<meta name="description" content="Painel AprenderMais: login (Email/Senha + Google) integrado, criar cursos e adicionar módulos."/>
+<title>AprenderMais — Criar Cursos (UI Antiga)</title>
+<meta name="description" content="Criar curso - AprenderMais. UI antiga com painel lateral neon, adicionar módulos, Firebase Database + Storage, uploads com progresso e preview.">
+<!-- ====== STYLES: UI ANTIGA (painel lateral, neon ciano) ====== -->
 <style>
-/* --- Theme & layout (compacto) --- */
-:root{--bg:#050814;--muted:#94a3b8;--accent:#4f46e5;--accent2:#06b6d4;--card:#071226;--radius:12px;--danger:#ef4444;--success:#16a34a}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#030416,#071022);color:#e6eef8;padding:18px}
-.wrap{max-width:1200px;margin:0 auto}header{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(90deg, rgba(11,19,40,0.36), rgba(6,18,24,0.36));backdrop-filter:blur(6px)}
-.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900}
-h1{margin:0}.tag{color:var(--muted);font-size:13px}nav{margin-left:auto;display:flex;gap:8px;align-items:center}
-.btn{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}@media(max-width:980px){.grid{grid-template-columns:1fr}}
-.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-label{display:block;color:var(--muted);margin-top:10px}input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-textarea{min-height:100px;resize:vertical}.thumb{height:140px;border-radius:10px;background:#081226;border:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.progress{height:8px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;margin-top:8px}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%}
-.muted{color:var(--muted)}.small{font-size:13px}.courses{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}.card{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-.modules{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mcard{width:160px;background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
-.hidden{display:none}.status{font-size:13px;color:var(--muted);margin-left:8px}
+  :root{
+    --bg:#050814;
+    --panel:#071226;
+    --neon1:#06b6d4;
+    --neon2:#4f46e5;
+    --muted:#94a3b8;
+    --card:#081426;
+    --glass:rgba(255,255,255,0.03);
+    --radius:12px;
+    --maxw:1300px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#020318 0%, #04102a 100%);
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+  }
 
-/* AUTH overlay */
-.auth-back{position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.68), rgba(0,0,0,0.68));display:flex;align-items:center;justify-content:center;z-index:999;padding:18px}
-.auth-card{width:920px;max-width:100%;background:linear-gradient(180deg,#071224,#061622);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);color:#e6eef8}
-.auth-grid{display:grid;grid-template-columns:1fr 320px;gap:12px}.social-btn{display:flex;gap:8px;align-items:center;background:#0b1220;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-.error{color:var(--danger);font-weight:700;margin-top:8px} .success{color:var(--success);font-weight:700;margin-top:8px}
+  .wrap{max-width:var(--maxw);margin:18px auto;padding:18px}
+  header{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background: linear-gradient(90deg, rgba(6,18,30,0.36), rgba(4,14,22,0.36));backdrop-filter: blur(6px);border:1px solid var(--glass)}
+  .logo{width:60px;height:60px;border-radius:12px;background:linear-gradient(135deg,var(--neon1),var(--neon2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff}
+  h1{margin:0;font-size:18px}
+  .tag{color:var(--muted);font-size:13px;margin-top:4px}
+
+  .layout{display:grid;grid-template-columns: 1fr 360px;gap:18px;margin-top:16px}
+  @media(max-width:980px){ .layout{grid-template-columns:1fr} }
+
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:14px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03);
+    box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+  }
+
+  label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+  input,textarea,select,button{font-family:inherit}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+  textarea{min-height:100px;resize:vertical}
+  .row{display:flex;gap:8px}
+  .btn{background:linear-gradient(90deg,var(--neon1),var(--neon2));border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .btn.small{padding:6px 8px;font-size:13px;border-radius:8px}
+  .muted{color:var(--muted)}
+
+  /* Course cards area */
+  .courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-top:12px}
+  .course-card{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:10px}
+  .thumb{width:100%;height:160px;border-radius:8px;background:#081226;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+
+  /* modules list within create page */
+  .modules-list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+  .module-item{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.02);
+    display:flex;gap:10px;align-items:flex-start;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+  }
+  .module-thumb{width:120px;height:72px;border-radius:8px;overflow:hidden;background:#061426;border:1px solid rgba(255,255,255,0.02)}
+  .module-thumb img{width:100%;height:100%;object-fit:cover}
+  .module-body{flex:1}
+  .module-title{font-weight:800}
+  .module-desc{color:var(--muted);font-size:13px;margin-top:6px}
+
+  /* modal */
+  .modal-back{position:fixed;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+  .modal{width:920px;max-width:100%;background:linear-gradient(180deg,#071224,#061622);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);color:#e6eef8}
+
+  /* small helpers */
+  .hidden{display:none}
+  .progress{height:8px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden}
+  .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--neon1),var(--neon2))}
+
+  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo">AM</div>
-    <div>
-      <h1>AprenderMais — Criar Cursos</h1>
-      <div class="tag">Login (Email + Google). Publique cursos após entrar.</div>
-    </div>
-    <nav>
-      <a class="btn ghost" href="index.html">⬅ Voltar ao Início</a>
-      <a class="btn ghost" href="sobre.html">Mais Sites</a>
-      <button id="btnSignOut" class="btn ghost hidden">Sair</button>
-      <div id="userInfo" class="status"></div>
-    </nav>
-  </header>
-
-  <div class="grid" id="mainGrid">
-    <main>
-      <section class="panel" id="createPanel">
-        <h3>Publicar novo curso</h3>
-        <div class="muted small">Você precisa estar logado (Email ou Google) para publicar.</div>
-
-        <label>Nome</label><input id="nome" placeholder="Ex: Curso de JavaScript" />
-        <label>Descrição</label><textarea id="descricao" placeholder="Descrição do curso"></textarea>
-        <label>Tags (vírgula)</label><input id="tags" placeholder="web,frontend,js" />
-        <label>Nível</label><select id="nivel"><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select>
-        <label>Link opcional</label><input id="link" placeholder="https://..." />
-
-        <label>Thumbnail (upload ou URL)</label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input id="thumbFile" type="file" accept="image/*" />
-          <input id="thumbUrl" placeholder="Ou cole URL" style="flex:1" />
-        </div>
-        <div id="thumbPreview" class="thumb"></div>
-        <div id="thumbProgress" class="progress hidden"><i></i></div>
-
-        <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-          <button id="btnPublicar" class="btn">Publicar curso</button>
-          <button id="btnLimpar" class="btn ghost">Limpar</button>
-          <div id="pubMsg" class="status"></div>
-        </div>
-      </section>
-
-      <section style="margin-top:14px">
-        <h3>Cursos</h3>
-        <div id="courses" class="courses"></div>
-        <div id="none" class="muted small hidden">Nenhum curso publicado ainda.</div>
-      </section>
-    </main>
-
-    <aside>
-      <section class="panel">
-        <h4>Preview</h4>
-        <div class="small muted">Thumbnail selecionado</div>
-        <div id="sideThumb" class="thumb" style="margin-top:8px"></div>
-        <div class="small muted" style="margin-top:8px">Imagens serão redimensionadas antes do upload (opção otimizada).</div>
-      </section>
-
-      <section class="panel" style="margin-top:12px">
-        <h4>Atalhos</h4>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-          <button id="btnMeus" class="btn ghost small">Meus cursos</button>
-          <button id="btnRefresh" class="btn small">Atualizar</button>
-        </div>
-        <div class="note" style="margin-top:12px">Login por Email/Senha e Google. Autenticação anônima é mantida apenas para leitura.</div>
-      </section>
-    </aside>
-  </div>
-</div>
-
-<!-- modal: adicionar módulo (mantido) -->
-<div id="moduleModal" class="hidden" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:100;padding:14px">
-  <div style="width:920px;max-width:100%;background:linear-gradient(180deg,#071224,#061622);padding:16px;border-radius:10px;color:#e6eef8">
-    <div style="display:flex;justify-content:space-between;align-items:center">
+  <div class="wrap">
+    <header>
+      <div class="logo">AM</div>
       <div>
-        <strong id="moduleModalTitle">Adicionar Módulo</strong><div id="moduleCourseName" class="muted small"></div>
+        <h1>AprenderMais — Criar Cursos</h1>
+        <div class="tag">UI antiga — painel lateral • neon ciano</div>
       </div>
-      <div style="display:flex;gap:8px">
-        <button id="modalSave" class="btn">Salvar</button>
-        <button id="modalCancel" class="btn ghost">Cancelar</button>
-      </div>
-    </div>
+      <nav style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <a class="btn ghost" href="index.html">⬅ Voltar</a>
+        <a class="btn ghost" href="sobre.html">Mais sites</a>
+      </nav>
+    </header>
 
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px">
-      <div>
-        <label>Título</label><input id="modTitulo" />
-        <label>Descrição</label><textarea id="modTexto"></textarea>
-        <label>Link opcional</label><input id="modLink" />
-        <label>Arquivo opcional</label><input id="modFile" type="file" />
-      </div>
-      <div>
-        <label>Imagem do módulo (upload ou URL)</label><input id="modImageFile" type="file" accept="image/*" /><input id="modImageUrl" placeholder="Ou cole URL" style="margin-top:8px" />
-        <div id="modPreview" class="thumb" style="margin-top:8px"></div>
-        <div id="modProgress" class="progress hidden"><i></i></div>
-      </div>
-    </div>
-  </div>
-</div>
+    <div class="layout">
+      <!-- MAIN: criar curso -->
+      <main>
+        <section class="panel" id="createPanel">
+          <h2 style="margin:0 0 8px 0">Publicar novo curso</h2>
+          <div class="muted small">Preencha os dados abaixo. Adicione módulos com o botão "Adicionar Módulo".</div>
 
-<!-- auth overlay (login + register + google) -->
-<div id="authOverlay" class="auth-back" style="display:flex;">
-  <div class="auth-card">
-    <div style="display:flex;justify-content:space-between;align-items:start">
-      <div>
-        <h2 style="margin:0">Entrar no AprenderMais</h2>
-        <div class="muted small">Registre-se para publicar cursos. Ou entre com Google.</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div id="authStatusMsg" class="muted small"></div>
-      </div>
-    </div>
+          <label for="cursoNome">Nome do curso</label>
+          <input id="cursoNome" placeholder="Ex: Programação Web para iniciantes" />
 
-    <div class="auth-grid" style="margin-top:12px">
-      <div>
-        <label>Email</label><input id="authEmail" placeholder="seu@exemplo.com" />
-        <label>Senha</label><input id="authPass" type="password" placeholder="Senha (min 6 caracteres)" />
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button id="btnLogin" class="btn">Entrar</button>
-          <button id="btnRegister" class="btn ghost">Criar conta</button>
-        </div>
-        <div id="authError" class="error hidden"></div>
-        <div id="authSuccess" class="success hidden"></div>
-        <div style="margin-top:10px" class="muted small">ou entre com:</div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <div id="btnGoogle" class="social-btn"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18'><path fill='%23EA4335' d='M9 4.48c1.69 0 2.84.73 3.5 1.34l2.59-2.5C13.92 1.65 11.68.5 9 .5 5.48.5 2.53 2.6.9 5.7l2.78 2.16C4.1 6.1 6.32 4.48 9 4.48z'/></svg>" style="width:18px;height:18px"/> Entrar com Google</div>
-        </div>
-      </div>
-      <aside style="border-left:1px solid rgba(255,255,255,0.03);padding-left:12px">
-        <h4 style="margin-top:0">Por que se registrar?</h4>
-        <ul class="muted small">
-          <li>Publicar cursos e associar autoria</li>
-          <li>Gerenciar módulos e uploads</li>
-          <li>Atribuir créditos e reputação</li>
-        </ul>
-        <div style="margin-top:12px" class="muted small">Autenticação segura via Firebase Authentication.</div>
+          <label for="cursoDescricao">Descrição</label>
+          <textarea id="cursoDescricao" placeholder="Descrição curta do curso"></textarea>
+
+          <label for="cursoTags">Tags (separadas por vírgula)</label>
+          <input id="cursoTags" placeholder="ex: web,frontend,html,css" />
+
+          <label for="cursoNivel">Nível</label>
+          <select id="cursoNivel">
+            <option>Iniciante</option>
+            <option>Intermediário</option>
+            <option>Avançado</option>
+          </select>
+
+          <label for="cursoLink">Link (opcional)</label>
+          <input id="cursoLink" placeholder="Link do curso (opcional) — ex: repositório, YouTube" />
+
+          <label>Thumbnail do curso (upload ou URL)</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="thumbFile" type="file" accept="image/*" />
+            <input id="thumbUrl" placeholder="Ou cole uma URL de imagem" style="flex:1" />
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+            <button id="btnAddModule" class="btn">➕ Adicionar Módulo</button>
+            <button id="btnPublish" class="btn">📤 Publicar curso</button>
+            <button id="btnClear" class="btn ghost">Limpar</button>
+            <div style="margin-left:auto" id="publishStatus" class="muted">Pronto</div>
+          </div>
+
+          <!-- modules section (inline) -->
+          <div id="modulesArea" class="modules-list" aria-live="polite" style="margin-top:14px"></div>
+
+        </section>
+
+        <!-- published courses preview (bottom) -->
+        <section style="margin-top:16px">
+          <h3 style="margin:0">Cursos publicados (visualização)</h3>
+          <div id="publishedList" class="courses" style="margin-top:12px"></div>
+          <div id="noPublished" class="muted" style="display:none">Nenhum curso publicado ainda.</div>
+        </section>
+      </main>
+
+      <!-- RIGHT: painel lateral -->
+      <aside>
+        <section class="panel">
+          <h4 style="margin:0">Preview do thumbnail</h4>
+          <div id="thumbPreview" class="thumb" style="margin-top:10px"></div>
+          <div class="muted small" style="margin-top:8px">Sugestão: 1280×720. Formatos: jpg, png.</div>
+        </section>
+
+        <section class="panel" style="margin-top:12px">
+          <h4 style="margin:0">Upload e Progresso</h4>
+          <div style="margin-top:10px">
+            <div class="muted small">Progresso do upload do thumbnail</div>
+            <div class="progress" style="margin-top:6px"><i id="thumbProgress"></i></div>
+
+            <div style="margin-top:12px" class="muted small">Progresso do módulo atual</div>
+            <div class="progress" style="margin-top:6px"><i id="moduleProgress"></i></div>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top:12px">
+          <h4 style="margin:0">Ações Rápidas</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <button id="btnMyCourses" class="btn ghost small">Meus cursos (filtrar)</button>
+            <button id="btnRefresh" class="btn small">Atualizar visual</button>
+          </div>
+        </section>
       </aside>
     </div>
+
+    <footer>© AprenderMais — design antigo • GbzStudio</footer>
   </div>
-</div>
 
-<!-- Firebase libs -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-
-<script>
-/**************************************************************************
- * criar.html — Login integrado (Email + Google) + painel de criação
- * IMPORTANT: Do NOT put hash_config or other sensitive keys in this file.
- * If you want to use an OAuth Web Client ID (Google Cloud) for extra features,
- * create it in Google Cloud Console and add your domain (gbzstudio.github.io).
- *
- * If you have the CLIENT_ID you can optionally use it for Google One-Tap or
- * to configure additional Google APIs, but Firebase signInWithPopup works
- * without placing the client ID in the front-end.
- **************************************************************************/
-
-/* ---------------- FIREBASE CONFIG (public) ---------------- */
-const firebaseConfig = {
-  apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
-  authDomain: "fir-auth-3521c.firebaseapp.com",
-  databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
-  projectId: "fir-auth-3521c",
-  storageBucket: "fir-auth-3521c.firebasestorage.app",
-  messagingSenderId: "873308453565",
-  appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
-  measurementId: "G-LWMZJ55W7N"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth(), db = firebase.database(), storage = firebase.storage();
-
-/* ---------------- ELEMENTS ---------------- */
-const authOverlay = document.getElementById('authOverlay');
-const authEmail = document.getElementById('authEmail'), authPass = document.getElementById('authPass');
-const btnLogin = document.getElementById('btnLogin'), btnRegister = document.getElementById('btnRegister');
-const btnGoogle = document.getElementById('btnGoogle'), authError = document.getElementById('authError'), authSuccess = document.getElementById('authSuccess');
-const authStatusMsg = document.getElementById('authStatusMsg');
-const btnSignOut = document.getElementById('btnSignOut'), userInfo = document.getElementById('userInfo');
-
-const btnPublicar = document.getElementById('btnPublicar'), btnLimpar = document.getElementById('btnLimpar');
-const nomeEl = document.getElementById('nome'), descricaoEl = document.getElementById('descricao'), tagsEl = document.getElementById('tags'), nivelEl = document.getElementById('nivel'), linkEl = document.getElementById('link');
-const thumbFile = document.getElementById('thumbFile'), thumbUrl = document.getElementById('thumbUrl'), thumbPreview = document.getElementById('thumbPreview'), sideThumb = document.getElementById('sideThumb');
-const thumbProgress = document.getElementById('thumbProgress'), thumbProgressBar = thumbProgress.querySelector('i');
-const coursesEl = document.getElementById('courses'), noneEl = document.getElementById('none'), pubMsg = document.getElementById('pubMsg');
-const btnMeus = document.getElementById('btnMeus'), btnRefresh = document.getElementById('btnRefresh');
-
-const moduleModal = document.getElementById('moduleModal'), moduleModalTitle = document.getElementById('moduleModalTitle'), moduleCourseName = document.getElementById('moduleCourseName');
-const modalSave = document.getElementById('modalSave'), modalCancel = document.getElementById('modalCancel');
-const modTitulo = document.getElementById('modTitulo'), modTexto = document.getElementById('modTexto'), modLink = document.getElementById('modLink'), modFile = document.getElementById('modFile');
-const modImageFile = document.getElementById('modImageFile'), modImageUrl = document.getElementById('modImageUrl'), modPreview = document.getElementById('modPreview'), modProgress = document.getElementById('modProgress'), modProgressBar = modProgress.querySelector('i');
-
-let currentUser = null;
-let coursesCache = [];
-let currentCourseForModule = null;
-let tempModuleImage = null;
-
-/* ---------------- HELPERS ---------------- */
-function toast(msg, t=2200){ const d=document.createElement('div'); d.textContent=msg; d.style.cssText="position:fixed;right:18px;bottom:18px;background:#061024;color:#e6eef8;padding:12px 16px;border-radius:10px;z-index:9999;border:1px solid rgba(255,255,255,0.03)"; document.body.appendChild(d); setTimeout(()=>d.style.opacity='0', t); setTimeout(()=>d.remove(), t+300); }
-function fmt(t){ try{return new Date(t).toLocaleString(); } catch(e){ return '-'; } }
-function truncate(s,n=120){ if(!s) return ''; return s.length>n? s.slice(0,n-1)+'…': s; }
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch]); }
-
-/* debounce */
-function debounce(fn,ms=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); } }
-
-/* image resize helper */
-async function resizeImageFile(file, maxWidth=1280, maxHeight=720, quality=0.82){
-  return new Promise((res, rej)=>{
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      let w = img.naturalWidth, h = img.naturalHeight;
-      const ratio = Math.min(1, maxWidth/w, maxHeight/h);
-      w = Math.round(w*ratio); h = Math.round(h*ratio);
-      const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
-      const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-      canvas.toBlob(blob => { URL.revokeObjectURL(url); if(!blob) return rej(new Error('Falha no resize')); res(blob); }, 'image/jpeg', quality);
-    };
-    img.onerror = (e)=>{ URL.revokeObjectURL(url); rej(e); };
-    img.src = url;
-  });
-}
-
-/* upload with progress */
-function uploadWithProgress(storagePath, fileOrBlob, onProgress){
-  const ref = storage.ref().child(storagePath);
-  const task = ref.put(fileOrBlob);
-  return new Promise((resolve,reject)=>{
-    task.on('state_changed', snap=>{
-      const pct = Math.round((snap.bytesTransferred/snap.totalBytes)*100);
-      if(onProgress) onProgress(pct);
-    }, err=>reject(err), async ()=>{ try{ const url = await task.snapshot.ref.getDownloadURL(); resolve(url);} catch(e){ reject(e); }});
-  });
-}
-
-/* ---------------- AUTH (email/password + Google) ---------------- */
-/* Optional: If you want to use your OAuth 2.0 Web Client ID for Google One-Tap or other
-   Google APIs, create it in Google Cloud Console and add your domain (gbzstudio.github.io).
-   You do NOT need to paste that client ID here for Firebase signInWithPopup to work.
-   If you do have a CLIENT_ID and plan to use One-Tap, put it in a safe place and use it
-   only for that extra feature. */
-
-auth.onAuthStateChanged(u=>{
-  currentUser = u;
-  if(u && !u.isAnonymous){
-    hideAuthOverlay();
-    onUserReady(u);
-  } else {
-    showAuthOverlay();
-    if(!u) auth.signInAnonymously().catch(()=>{});
-  }
-  // update UI sign-out
-  if(u && !u.isAnonymous){ btnSignOut.classList.remove('hidden'); userInfo.textContent = (u.displayName || u.email || ('uid:' + u.uid)); }
-  else { btnSignOut.classList.add('hidden'); userInfo.textContent = ''; }
-});
-
-function showAuthOverlay(){ authOverlay.style.display='flex'; }
-function hideAuthOverlay(){ authOverlay.style.display='none'; authError.classList.add('hidden'); authSuccess.classList.add('hidden'); authStatusMsg.textContent=''; }
-
-// Email/password login
-btnLogin.addEventListener('click', async ()=>{
-  const email = (authEmail.value||'').trim(), pass = (authPass.value||'').trim();
-  authError.classList.add('hidden'); authSuccess.classList.add('hidden'); authStatusMsg.textContent='Entrando...';
-  if(!email || !pass){ authError.textContent='Preencha email e senha.'; authError.classList.remove('hidden'); authStatusMsg.textContent=''; return; }
-  try{ await auth.signInWithEmailAndPassword(email, pass); authSuccess.textContent='Conectado!'; authSuccess.classList.remove('hidden'); authStatusMsg.textContent=''; }
-  catch(e){ console.error(e); authError.textContent='Erro: ' + (e.message || e.code); authError.classList.remove('hidden'); authStatusMsg.textContent=''; }
-});
-
-// Register
-btnRegister.addEventListener('click', async ()=>{
-  const email = (authEmail.value||'').trim(), pass = (authPass.value||'').trim();
-  authError.classList.add('hidden'); authSuccess.classList.add('hidden'); authStatusMsg.textContent='Criando conta...';
-  if(!email || !pass || pass.length<6){ authError.textContent='Email inválido ou senha com < 6 chars.'; authError.classList.remove('hidden'); authStatusMsg.textContent=''; return; }
-  try{
-    const userCred = await auth.createUserWithEmailAndPassword(email, pass);
-    await userCred.user.updateProfile({ displayName: email.split('@')[0] }).catch(()=>{});
-    authSuccess.textContent = 'Conta criada — bem-vindo!';
-    authSuccess.classList.remove('hidden');
-    authStatusMsg.textContent='';
-  }catch(e){ console.error(e); authError.textContent='Erro ao criar conta: ' + (e.message || e.code); authError.classList.remove('hidden'); authStatusMsg.textContent=''; }
-});
-
-// Google Sign-In (popup)
-// Note: you do NOT need to publish a client ID into this file; ensure your Google Cloud OAuth 2.0 Client has this
-// origin (gbzstudio.github.io) authorized. Firebase will use the configuration of your Firebase project.
-btnGoogle.addEventListener('click', async ()=>{
-  authError.classList.add('hidden'); authSuccess.classList.add('hidden'); authStatusMsg.textContent='Conectando com Google...';
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope('profile'); provider.addScope('email');
-  // Optional: provider.setCustomParameters({ 'prompt': 'select_account' });
-  try{
-    await auth.signInWithPopup(provider);
-    authSuccess.textContent = 'Conectado com Google!';
-    authSuccess.classList.remove('hidden');
-    authStatusMsg.textContent = '';
-  }catch(e){ console.error(e); authError.textContent = 'Erro Google: ' + (e.message || e.code); authError.classList.remove('hidden'); authStatusMsg.textContent=''; }
-});
-
-// Sign out
-btnSignOut.addEventListener('click', async ()=>{ try{ await auth.signOut(); toast('Desconectado'); showAuthOverlay(); }catch(e){ toast('Erro ao sair'); } });
-
-/* ---------------- ON USER READY ---------------- */
-function onUserReady(user){
-  // enable features that require an identified user (not anonymous)
-  loadCourses();
-}
-
-/* ---------------- PUBLISH COURSE ---------------- */
-btnPublicar.addEventListener('click', async ()=>{
-  const nome = (nomeEl.value||'').trim(), descricao = (descricaoEl.value||'').trim();
-  const tags = (tagsEl.value||'').split(',').map(s=>s.trim()).filter(Boolean), nivel = (nivelEl.value||'').trim(), link = (linkEl.value||'').trim();
-  const u = auth.currentUser;
-  if(!u || u.isAnonymous){ alert('Você precisa estar logado com conta (email/google) para publicar.'); return; }
-  if(!nome || !descricao){ alert('Preencha nome e descrição'); return; }
-  btnPublicar.disabled = true; pubMsg.textContent='Processando...';
-  try{
-    let thumbnailUrl = thumbUrl.value.trim() || null;
-    if(thumbFile.files.length > 0){
-      const f = thumbFile.files[0];
-      if(!f.type.startsWith('image/')) throw new Error('Thumbnail precisa ser imagem');
-      if(f.size > 20 * 1024 * 1024) throw new Error('Thumbnail muito grande (max 20MB)');
-      const resized = await resizeImageFile(f, 1280, 720, 0.82);
-      thumbProgress.classList.remove('hidden'); thumbProgressBar.style.width='0%';
-      const path = `thumbnails/${u.uid}/${Date.now()}_${f.name.replace(/\s/g,'_')}`;
-      thumbnailUrl = await uploadWithProgress(path, resized, pct => { thumbProgressBar.style.width = pct + '%'; });
-      thumbProgress.classList.add('hidden');
-    }
-    const payload = { nome, descricao, tags, nivel, link, thumbnailUrl: thumbnailUrl || null, authorId: u.uid, authorName: u.displayName || u.email || ('uid:'+u.uid), createdAt: Date.now() };
-    await db.ref('cursos').push(payload);
-    toast('Curso publicado com sucesso.');
-    // clear
-    nomeEl.value=''; descricaoEl.value=''; tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFile.value=''; thumbUrl.value=''; thumbPreview.innerHTML=''; sideThumb.innerHTML='';
-  }catch(e){ console.error(e); alert('Erro ao publicar: ' + (e.message || e)); }
-  finally{ btnPublicar.disabled=false; pubMsg.textContent=''; }
-});
-
-btnLimpar.addEventListener('click', ()=>{ nomeEl.value=''; descricaoEl.value=''; tagsEl.value=''; nivelEl.value='Iniciante'; linkEl.value=''; thumbFile.value=''; thumbUrl.value=''; thumbPreview.innerHTML=''; sideThumb.innerHTML=''; toast('Campos limpos'); });
-
-thumbFile.addEventListener('change', ()=>{ const f = thumbFile.files[0]; if(!f){ if(!thumbUrl.value) thumbPreview.innerHTML=''; return; } const url = URL.createObjectURL(f); thumbPreview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">`; sideThumb.innerHTML = thumbPreview.innerHTML; });
-thumbUrl.addEventListener('input', ()=>{ const v = (thumbUrl.value||'').trim(); if(!v){ if(!thumbFile.files.length){ thumbPreview.innerHTML=''; sideThumb.innerHTML=''; } return; } thumbPreview.innerHTML = `<img src="${v}" style="width:100%;height:100%;object-fit:cover">`; sideThumb.innerHTML = thumbPreview.innerHTML; });
-
-/* ---------------- COURSES LISTEN & RENDER ---------------- */
-function loadCourses(){
-  coursesEl.innerHTML = ''; noneEl.classList.add('hidden');
-  db.ref('cursos').on('value', snap => {
-    const arr=[]; snap.forEach(child=>{ const c=child.val(); c._id = child.key; c.tags = c.tags || []; c.createdAt = c.createdAt || Date.now(); arr.push(c); });
-    arr.sort((a,b)=> (b.createdAt||0)-(a.createdAt||0)); coursesCache = arr; renderCourses(arr);
-  }, err => { console.warn('DB read error', err); toast('Erro ao carregar cursos — verifique a conexão'); });
-}
-
-function renderCourses(list){
-  coursesEl.innerHTML=''; if(!list || !list.length){ noneEl.classList.remove('hidden'); return; }
-  list.forEach(c=>{
-    const card=document.createElement('div'); card.className='card';
-    card.innerHTML = `<div style="display:flex;gap:12px;align-items:center">
-      <div style="width:120px;height:76px;border-radius:8px;overflow:hidden;background:#081226;border:1px solid rgba(255,255,255,0.02)">${c.thumbnailUrl?`<img src="${c.thumbnailUrl}" style="width:100%;height:100%;object-fit:cover">`:'<div style="padding:10px;color:var(--muted)">Sem imagem</div>'}</div>
-      <div style="flex:1">
-        <div style="font-weight:800">${escapeHtml(c.nome)}</div>
-        <div class="muted small">${escapeHtml(truncate(c.descricao,120))}</div>
-        <div style="margin-top:8px"><span class="muted small">${c.nivel||''}</span> <span class="muted small">• ${c.tags?.slice(0,3).join(', ')}</span></div>
+  <!-- MODAL: adicionar módulo detalhado (usado para preenchimento) -->
+  <div id="moduleModal" class="modal-back" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong id="modalTitle">Adicionar Módulo</strong>
+          <div class="muted small" id="modalCourseName">—</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="modalSave" class="btn">Salvar módulo</button>
+          <button id="modalCancel" class="btn ghost">Cancelar</button>
+        </div>
       </div>
-    </div>`;
-    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    const addBtn = document.createElement('button'); addBtn.className='btn small'; addBtn.textContent='➕ Adicionar Módulo'; addBtn.onclick = ()=> openModuleModal(c);
-    actions.appendChild(addBtn);
-    if(c.link){ const linkA=document.createElement('a'); linkA.href=c.link; linkA.target='_blank'; linkA.className='btn ghost small'; linkA.textContent='Abrir link'; actions.appendChild(linkA); }
-    const meta=document.createElement('div'); meta.style.marginLeft='auto'; meta.innerHTML=`<div class="muted small">Criado: ${fmt(c.createdAt)}</div>`; actions.appendChild(meta);
-    card.appendChild(actions);
-    const modulesDiv=document.createElement('div'); modulesDiv.style.marginTop='12px'; modulesDiv.className='modules'; modulesDiv.id='mods_'+c._id; card.appendChild(modulesDiv);
-    coursesEl.appendChild(card); loadModulesForCourse(c._id, modulesDiv);
-  });
-}
 
-function loadModulesForCourse(courseId, container){
-  container.innerHTML = '<div class="muted small">Carregando módulos...</div>';
-  db.ref(`cursos/${courseId}/modulos`).orderByChild('createdAt').once('value').then(snap => {
-    const mods=[]; snap.forEach(child=>{ const m=child.val(); m._id = child.key; mods.push(m); });
-    mods.sort((a,b)=> (a.createdAt||0)-(b.createdAt||0)); container.innerHTML=''; if(!mods.length){ container.innerHTML = '<div class="muted small">Nenhum módulo</div>'; return; }
-    mods.forEach(m=>{ const mc=document.createElement('div'); mc.className='mcard'; mc.innerHTML = `<div style="height:80px;overflow:hidden;border-radius:6px">${m.imageUrl?`<img src="${m.imageUrl}" style="width:100%;height:100%;object-fit:cover">`:'<div style="padding:10px;color:var(--muted)">Sem imagem</div>'}</div><div style="font-weight:700;margin-top:6px">${escapeHtml(m.titulo||'Sem título')}</div><div class="muted small">${truncate(m.texto||'',80)}</div>${m.link?`<div style="margin-top:6px"><a href="${m.link}" target="_blank" class="muted small">${truncate(m.link,40)}</a></div>`:''}`; container.appendChild(mc); });
-  }).catch(e=>{ console.warn('modules load err', e); container.innerHTML = '<div class="muted small">Erro ao carregar módulos</div>'; });
-}
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:12px;margin-top:12px">
+        <div>
+          <label>Título do módulo</label>
+          <input id="modTitulo" placeholder="Ex: Aula 1 — Introdução" />
+          <label>Descrição / Conteúdo</label>
+          <textarea id="modTexto" placeholder="Texto do módulo"></textarea>
+          <label>Link opcional</label>
+          <input id="modLink" placeholder="https://..." />
+          <label>Arquivo opcional (pdf, txt, mp4)</label>
+          <input id="modFile" type="file" />
+        </div>
 
-/* ---------------- MODULE MODAL ---------------- */
-function openModuleModal(course){
-  const u = auth.currentUser; if(!u || u.isAnonymous){ alert('Você precisa estar logado com conta (email/google) para adicionar módulos.'); return; }
-  currentCourseForModule = course; moduleCourseName.textContent = course.nome; moduleModal.style.display='flex';
-  modTitulo.value=''; modTexto.value=''; modLink.value=''; modFile.value=''; modImageFile.value=''; modImageUrl.value=''; modPreview.innerHTML=''; tempModuleImage=null;
-}
-modalCancel.addEventListener('click', ()=>{ moduleModal.style.display='none'; currentCourseForModule=null; tempModuleImage=null; });
+        <div>
+          <label>Imagem do módulo (upload ou URL)</label>
+          <input id="modImageFile" type="file" accept="image/*" />
+          <input id="modImageUrl" placeholder="Ou cole URL da imagem" style="margin-top:8px"/>
+          <div id="modImagePreview" class="thumb" style="margin-top:10px"></div>
+          <div class="muted small" style="margin-top:10px">As imagens são enviadas para <code>/modulos-imagens/</code> no Firebase Storage.</div>
+        </div>
+      </div>
 
-modImageFile.addEventListener('change', ()=>{ const f = modImageFile.files[0]; if(!f){ modPreview.innerHTML=''; tempModuleImage=null; return; } if(!f.type.startsWith('image/')){ alert('Selecione imagem'); return; } tempModuleImage=f; const url = URL.createObjectURL(f); modPreview.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover">`; });
-modImageUrl.addEventListener('input', ()=>{ const v=(modImageUrl.value||'').trim(); if(!v){ if(!tempModuleImage) modPreview.innerHTML=''; return; } modPreview.innerHTML=`<img src="${v}" style="width:100%;height:100%;object-fit:cover">`; });
+    </div>
+  </div>
 
-modalSave.addEventListener('click', async ()=>{
-  if(!currentCourseForModule) return alert('Nenhum curso selecionado'); const titulo=(modTitulo.value||'').trim(), texto=(modTexto.value||'').trim(), link=(modLink.value||'').trim(); const u = auth.currentUser;
-  if(!u || u.isAnonymous) return alert('Você precisa estar logado para adicionar módulo.');
-  if(!titulo && !texto && !modFile.files.length) { alert('Forneça título, texto ou arquivo'); return; }
-  modalSave.disabled=true; modalSave.textContent='Salvando...';
-  try{
-    const payload={ titulo, texto, link, createdAt: Date.now() };
-    if(tempModuleImage){
-      const f = tempModuleImage; if(f.size > 25*1024*1024) throw new Error('Imagem muito grande (max 25MB)');
-      const resized = await resizeImageFile(f,1280,720,0.82); modProgress.classList.remove('hidden'); modProgressBar.style.width='0%';
-      const path = `modulos-imagens/${u.uid}/${currentCourseForModule._id}/${Date.now()}_${f.name.replace(/\s/g,'_')}`;
-      const url = await uploadWithProgress(path, resized, pct => modProgressBar.style.width = pct + '%'); payload.imageUrl = url; modProgress.classList.add('hidden');
-    } else if(modImageUrl.value.trim()){ payload.imageUrl = modImageUrl.value.trim(); }
-    if(modFile.files.length){
-      const f2 = modFile.files[0]; const path2 = `modulos-files/${u.uid}/${currentCourseForModule._id}/${Date.now()}_${f2.name.replace(/\s/g,'_')}`; modProgress.classList.remove('hidden'); modProgressBar.style.width='0%';
-      const url2 = await uploadWithProgress(path2, f2, pct => modProgressBar.style.width = pct + '%'); payload.fileUrl = url2; modProgress.classList.add('hidden');
+  <!-- TOAST container -->
+  <div id="toasts" style="position:fixed;right:18px;bottom:18px;z-index:9999"></div>
+
+  <!-- ====== FIREBASE LIBRARIES ====== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <!-- ====== APP SCRIPT: UI antiga + módulos + firebase ====== -->
+  <script>
+  /**
+   * criar.html — UI antiga
+   * - Livre (qualquer pessoa pode publicar)
+   * - Criação de curso + módulos dinâmicos
+   * - Upload para Firebase Storage + gravar em Realtime Database
+   * - Upload com progresso, resize de imagens no cliente, previews, autosave local e retry queue
+   *
+   * Observação: NÃO inclui hash_config nem dados sensíveis do backend.
+   */
+
+  // ---------- FIREBASE CONFIG (público - ok no client) ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyALpPt-tUWB0Gq-UeJXOJRRkyt0si8s4Nc",
+    authDomain: "fir-auth-3521c.firebaseapp.com",
+    databaseURL: "https://fir-auth-3521c-default-rtdb.firebaseio.com",
+    projectId: "fir-auth-3521c",
+    storageBucket: "fir-auth-3521c.firebasestorage.app",
+    messagingSenderId: "873308453565",
+    appId: "1:873308453565:web:4ff8d9863adb1eae1c95d4",
+    measurementId: "G-LWMZJ55W7N"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+  const storage = firebase.storage();
+
+  // ---------- ELEMENTS ----------
+  const cursoNome = document.getElementById('cursoNome');
+  const cursoDescricao = document.getElementById('cursoDescricao');
+  const cursoTags = document.getElementById('cursoTags');
+  const cursoNivel = document.getElementById('cursoNivel');
+  const cursoLink = document.getElementById('cursoLink');
+  const thumbFile = document.getElementById('thumbFile');
+  const thumbUrl = document.getElementById('thumbUrl');
+  const thumbPreview = document.getElementById('thumbPreview');
+  const btnAddModule = document.getElementById('btnAddModule');
+  const btnPublish = document.getElementById('btnPublish');
+  const btnClear = document.getElementById('btnClear');
+  const publishStatus = document.getElementById('publishStatus');
+  const modulesArea = document.getElementById('modulesArea');
+  const publishedList = document.getElementById('publishedList');
+  const noPublished = document.getElementById('noPublished');
+
+  const thumbProgressBar = document.getElementById('thumbProgress');
+  const moduleProgressBar = document.getElementById('moduleProgress');
+
+  const moduleModal = document.getElementById('moduleModal');
+  const modalSave = document.getElementById('modalSave');
+  const modalCancel = document.getElementById('modalCancel');
+  const modTitulo = document.getElementById('modTitulo');
+  const modTexto = document.getElementById('modTexto');
+  const modLink = document.getElementById('modLink');
+  const modFile = document.getElementById('modFile');
+  const modImageFile = document.getElementById('modImageFile');
+  const modImageUrl = document.getElementById('modImageUrl');
+  const modImagePreview = document.getElementById('modImagePreview');
+
+  const btnRefresh = document.getElementById('btnRefresh');
+  const btnMyCourses = document.getElementById('btnMyCourses');
+
+  const toasts = document.getElementById('toasts');
+
+  // ---------- STATE ----------
+  let modulesTemp = []; // array of module objects in form { id, titulo, texto, link, imageFile, imageUrl, file }
+  let currentModalForIndex = null; // index in modulesTemp being edited
+  let publishedCache = []; // preview cache of published courses
+  let uploadQueue = []; // queue for retry uploads (simple implementation)
+  let isPublishing = false;
+
+  // ---------- UTIL HELPERS ----------
+  function toast(msg, ms=2500){
+    const el = document.createElement('div');
+    el.textContent = msg;
+    el.style.cssText = 'background:linear-gradient(90deg,var(--neon1),var(--neon2));padding:10px 12px;border-radius:8px;color:#04101a;margin-top:8px;box-shadow:0 6px 18px rgba(0,0,0,0.4);font-weight:700';
+    toasts.appendChild(el);
+    setTimeout(()=> el.style.opacity='0', ms);
+    setTimeout(()=> el.remove(), ms+300);
+  }
+
+  function safeText(v){ return (v||'').toString().trim(); }
+  function uid(){ return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+
+  // debounce
+  function debounce(fn, ms=250){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=> fn(...a), ms); }; }
+
+  // escape html for safety in previews
+  function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch]); }
+
+  // image resize helper (returns Blob) - uses canvas
+  async function resizeImageFile(file, maxWidth=1280, maxHeight=720, quality=0.82){
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve(null);
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const ratio = Math.min(1, maxWidth / w, maxHeight / h);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => {
+          URL.revokeObjectURL(url);
+          if (!blob) return reject(new Error('Falha ao redimensionar imagem'));
+          resolve(blob);
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+      img.src = url;
+    });
+  }
+
+  // upload with progress -> returns downloadURL
+  function uploadWithProgress(storagePath, fileOrBlob, onProgress){
+    const ref = storage.ref().child(storagePath);
+    const task = ref.put(fileOrBlob);
+    return new Promise((resolve, reject) => {
+      task.on('state_changed', snapshot => {
+        const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        if (onProgress) onProgress(pct);
+      }, err => {
+        reject(err);
+      }, async () => {
+        try {
+          const url = await task.snapshot.ref.getDownloadURL();
+          resolve(url);
+        } catch(e){ reject(e); }
+      });
+    });
+  }
+
+  // save autosave to localStorage (for recovery)
+  function autosaveLocal(){
+    try {
+      const state = {
+        cursoNome: cursoNome.value,
+        cursoDescricao: cursoDescricao.value,
+        cursoTags: cursoTags.value,
+        cursoNivel: cursoNivel.value,
+        cursoLink: cursoLink.value,
+        modules: modulesTemp.map(m => ({
+          id: m.id, titulo: m.titulo, texto: m.texto, link: m.link, imageUrl: m.imageUrl || null
+        }))
+      };
+      localStorage.setItem('apm_autosave', JSON.stringify(state));
+      // little subtle status
+      publishStatus.textContent = 'Autosave local salvo';
+    } catch(e){ console.warn('autosave err', e); }
+  }
+
+  function loadAutosave(){
+    try {
+      const raw = localStorage.getItem('apm_autosave');
+      if(!raw) return;
+      const s = JSON.parse(raw);
+      cursoNome.value = s.cursoNome || '';
+      cursoDescricao.value = s.cursoDescricao || '';
+      cursoTags.value = s.cursoTags || '';
+      cursoNivel.value = s.cursoNivel || 'Iniciante';
+      cursoLink.value = s.cursoLink || '';
+      if (Array.isArray(s.modules)){
+        modulesTemp = s.modules.map(m => ({ id: m.id || uid(), titulo: m.titulo || '', texto: m.texto || '', link: m.link || '', imageFile: null, imageUrl: m.imageUrl || null, file: null }));
+        renderModules();
+      }
+      if (s.cursoNome) toast('Autosave carregado');
+    } catch(e) { console.warn('load autosave err', e); }
+  }
+
+  // ---------- MODULES: add & render & modal flow ----------
+  function openModuleModalFor(index){
+    currentModalForIndex = index;
+    const m = modulesTemp[index];
+    modTitulo.value = m.titulo || '';
+    modTexto.value = m.texto || '';
+    modLink.value = m.link || '';
+    modImageFile.value = '';
+    modImageUrl.value = m.imageUrl || '';
+    modImagePreview.innerHTML = m.imageUrl ? `<img src="${m.imageUrl}" alt="preview">` : '';
+    moduleModal.style.display = 'flex';
+    document.getElementById('modalTitle').textContent = `Editar Módulo ${index+1}`;
+  }
+
+  function closeModuleModal(){
+    moduleModal.style.display = 'none';
+    currentModalForIndex = null;
+  }
+
+  // create a blank module (and open modal)
+  function createBlankModule(){
+    const m = { id: uid(), titulo: '', texto: '', link: '', imageFile: null, imageUrl: null, file: null };
+    modulesTemp.push(m);
+    renderModules();
+    openModuleModalFor(modulesTemp.length - 1);
+    autosaveLocal();
+  }
+
+  // render modules inline
+  function renderModules(){
+    modulesArea.innerHTML = '';
+    modulesTemp.forEach((m, idx) => {
+      const el = document.createElement('div');
+      el.className = 'module-item';
+      el.draggable = true;
+      el.dataset.index = idx;
+      el.innerHTML = `
+        <div class="module-thumb">${m.imageUrl ? `<img src="${m.imageUrl}" alt="thumb">` : '<div style="padding:8px;color:var(--muted)">Sem imagem</div>'}</div>
+        <div class="module-body">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="module-title">${escapeHtml(m.titulo || ('Módulo ' + (idx+1)))}</div>
+              <div class="muted small">${escapeHtml(truncate(m.texto || '', 140))}</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn small btn-edit" data-index="${idx}">✏️ Editar</button>
+            </div>
+          </div>
+        </div>
+      `;
+      modulesArea.appendChild(el);
+    });
+
+    // attach edit handlers and drag handlers
+    modulesArea.querySelectorAll('.btn-edit').forEach(b => {
+      b.removeEventListener('click', onEditClick);
+      b.addEventListener('click', onEditClick);
+    });
+    attachDragHandlers();
+  }
+
+  function onEditClick(e){
+    const idx = Number(e.currentTarget.dataset.index);
+    openModuleModalFor(idx);
+  }
+
+  // drag and drop reorder (simple)
+  function attachDragHandlers(){
+    let draggedIndex = null;
+    modulesArea.querySelectorAll('.module-item').forEach(item=>{
+      item.addEventListener('dragstart', ev => {
+        draggedIndex = Number(item.dataset.index);
+        ev.dataTransfer.effectAllowed = 'move';
+      });
+      item.addEventListener('dragover', ev => {
+        ev.preventDefault();
+        ev.dataTransfer.dropEffect = 'move';
+        item.style.transform = 'scale(0.995)';
+      });
+      item.addEventListener('dragleave', ev => {
+        item.style.transform = '';
+      });
+      item.addEventListener('drop', ev => {
+        ev.preventDefault();
+        const targetIndex = Number(item.dataset.index);
+        if (draggedIndex === null || targetIndex === draggedIndex) return;
+        // reorder modulesTemp
+        const moved = modulesTemp.splice(draggedIndex, 1)[0];
+        modulesTemp.splice(targetIndex, 0, moved);
+        renderModules();
+        autosaveLocal();
+        toast('Ordem dos módulos atualizada');
+      });
+      item.addEventListener('dragend', ev => {
+        item.style.transform = '';
+        draggedIndex = null;
+      });
+    });
+  }
+
+  // modal save: commit fields to modulesTemp
+  modalSave.addEventListener('click', async ()=>{
+    if (currentModalForIndex === null) return;
+    const idx = currentModalForIndex;
+    const m = modulesTemp[idx];
+    m.titulo = safeText(modTitulo.value);
+    m.texto = safeText(modTexto.value);
+    m.link = safeText(modLink.value);
+
+    // handle image file input (store File reference)
+    const imgF = modImageFile.files[0];
+    if (imgF) m.imageFile = imgF;
+
+    // handle file input
+    const fileF = modFile.files[0];
+    if (fileF) m.file = fileF;
+
+    // image url input wins if provided
+    if (modImageUrl.value.trim()){
+      m.imageUrl = modImageUrl.value.trim();
+    } else if (imgF){
+      // preview local blob for immediate UI
+      m.imageUrl = URL.createObjectURL(imgF);
     }
-    await db.ref(`cursos/${currentCourseForModule._id}/modulos`).push(payload);
-    toast('Módulo criado com sucesso!'); const cont = document.getElementById('mods_' + currentCourseForModule._id); if(cont) loadModulesForCourse(currentCourseForModule._id, cont);
-    moduleModal.style.display='none'; currentCourseForModule=null;
-  }catch(e){ console.error(e); alert('Erro ao salvar módulo: ' + (e.message || e)); }
-  finally{ modalSave.disabled=false; modalSave.textContent='Salvar'; modProgress.classList.add('hidden'); modProgressBar.style.width='0%'; }
-});
 
-/* ---------------- INIT ---------------- */
-(function init(){
-  if(!auth.currentUser) auth.signInAnonymously().catch(()=>{});
-  btnRefresh.addEventListener('click', ()=> loadCourses());
-  btnMeus.addEventListener('click', ()=> {
-    const u = auth.currentUser; if(!u || u.isAnonymous) return toast('Faça login para ver seus cursos.'); const mine = coursesCache.filter(c=> c.authorId === u.uid); if(!mine.length) toast('Você não publicou cursos ainda.'); renderCourses(mine);
+    renderModules();
+    autosaveLocal();
+    closeModuleModal();
+    toast('Módulo salvo localmente');
   });
-  authPass.addEventListener('keydown', e => { if(e.key === 'Enter') btnLogin.click(); });
-})();
-</script>
+
+  modalCancel.addEventListener('click', ()=> {
+    closeModuleModal();
+  });
+
+  // preview thumb in sidebar when file or URL changes
+  thumbFile.addEventListener('change', ()=>{
+    const f = thumbFile.files[0];
+    if (!f){ if (!thumbUrl.value) thumbPreview.innerHTML = ''; return; }
+    const u = URL.createObjectURL(f);
+    thumbPreview.innerHTML = `<img src="${u}" alt="thumb preview">`;
+  });
+  thumbUrl.addEventListener('input', ()=>{
+    const v = thumbUrl.value.trim();
+    if (!v){ if (!thumbFile.files.length) thumbPreview.innerHTML = ''; return; }
+    thumbPreview.innerHTML = `<img src="${v}" alt="thumb preview">`;
+  });
+
+  // module image preview
+  modImageFile.addEventListener('change', ()=>{
+    const f = modImageFile.files[0];
+    if (!f){ if (!modImageUrl.value) modImagePreview.innerHTML=''; return; }
+    modImagePreview.innerHTML = `<img src="${URL.createObjectURL(f)}" alt="module preview">`;
+  });
+  modImageUrl.addEventListener('input', ()=>{
+    const v = modImageUrl.value.trim();
+    if (!v){ if (!modImageFile.files.length) modImagePreview.innerHTML=''; return; }
+    modImagePreview.innerHTML = `<img src="${v}" alt="module preview">`;
+  });
+
+  // ---------- PUBLISH FLOW (course + modules) ----------
+  btnPublish.addEventListener('click', async ()=>{
+    if (isPublishing) return toast('Já enviando... aguarde');
+    const nome = safeText(cursoNome.value);
+    const descricao = safeText(cursoDescricao.value);
+    if (!nome || !descricao) { alert('Preencha nome e descrição do curso.'); return; }
+
+    isPublishing = true;
+    btnPublish.disabled = true;
+    publishStatus.textContent = 'Preparando...';
+
+    try {
+      // handle thumbnail: prefer file then url
+      let thumbnailUrl = thumbUrl.value.trim() || null;
+      if (thumbFile.files.length > 0){
+        const f = thumbFile.files[0];
+        if (!f.type.startsWith('image/')) throw new Error('Thumbnail precisa ser imagem');
+        publishStatus.textContent = 'Redimensionando thumbnail...';
+        const resizedThumb = await resizeImageFile(f, 1280, 720, 0.85);
+        document.getElementById('thumbProgress').style.width = '0%';
+        publishStatus.textContent = 'Enviando thumbnail...';
+        thumbnailUrl = await uploadWithProgress(`thumbnails/${Date.now()}_${f.name.replace(/\s/g,'_')}`, resizedThumb, pct => {
+          document.getElementById('thumbProgress').style.width = pct + '%';
+        });
+      }
+
+      // prepare course payload
+      const tags = (safeText(cursoTags.value) || '').split(',').map(s => s.trim()).filter(Boolean);
+      const payload = {
+        nome,
+        descricao,
+        tags,
+        nivel: cursoNivel.value || 'Iniciante',
+        link: safeText(cursoLink.value) || null,
+        thumbnailUrl: thumbnailUrl || null,
+        createdAt: Date.now(),
+        author: 'anônimo'
+      };
+
+      publishStatus.textContent = 'Gravando curso...';
+      const courseRef = db.ref('cursos').push();
+      await courseRef.set(payload);
+      const courseId = courseRef.key;
+
+      // For each module, upload image/file if present, then push to DB
+      for (let i = 0; i < modulesTemp.length; i++){
+        const m = modulesTemp[i];
+        const modulePayload = {
+          titulo: m.titulo || `Módulo ${i+1}`,
+          texto: m.texto || '',
+          link: m.link || null,
+          imageUrl: m.imageUrl || null,
+          fileUrl: null,
+          createdAt: Date.now()
+        };
+
+        // image file upload (if provided). If imageFile present, it overrides imageUrl
+        if (m.imageFile){
+          publishStatus.textContent = `Enviando imagem do módulo ${i+1}...`;
+          moduleProgressBar.style.width = '0%';
+          const resized = await resizeImageFile(m.imageFile, 1280, 720, 0.82);
+          const path = `modulos-imagens/${courseId}/${Date.now()}_${m.imageFile.name.replace(/\s/g,'_')}`;
+          const url = await uploadWithProgress(path, resized, pct => { moduleProgressBar.style.width = pct + '%'; });
+          modulePayload.imageUrl = url;
+          moduleProgressBar.style.width = '0%';
+        }
+
+        // file upload
+        if (m.file){
+          publishStatus.textContent = `Enviando arquivo do módulo ${i+1}...`;
+          moduleProgressBar.style.width = '0%';
+          const path2 = `modulos-files/${courseId}/${Date.now()}_${m.file.name.replace(/\s/g,'_')}`;
+          const url2 = await uploadWithProgress(path2, m.file, pct => { moduleProgressBar.style.width = pct + '%'; });
+          modulePayload.fileUrl = url2;
+          moduleProgressBar.style.width = '0%';
+        }
+
+        await db.ref(`cursos/${courseId}/modulos`).push(modulePayload);
+      }
+
+      // success
+      toast('Curso e módulos publicados com sucesso!');
+      publishStatus.textContent = 'Publicado';
+      // clear form & local autosave
+      clearAll();
+      // refresh preview list
+      loadPublishedPreview();
+
+    } catch (e) {
+      console.error('publish err', e);
+      alert('Erro ao publicar: ' + (e && e.message ? e.message : e));
+      // push to uploadQueue for retry
+      uploadQueue.push({ modules: modulesTemp.slice(), curso: { nome: cursoNome.value, descricao: cursoDescricao.value } });
+      publishStatus.textContent = 'Erro — adicionada à fila';
+    } finally {
+      isPublishing = false;
+      btnPublish.disabled = false;
+      // reset progress bars after small delay
+      setTimeout(()=> { document.getElementById('thumbProgress').style.width = '0%'; moduleProgressBar.style.width = '0%'; }, 600);
+    }
+  });
+
+  // ---------- CLEAR / RESET ----------
+  btnClear.addEventListener('click', ()=> {
+    if (!confirm('Limpar formulário?')) return;
+    clearAll();
+    toast('Formulário limpo');
+  });
+
+  function clearAll(){
+    cursoNome.value = '';
+    cursoDescricao.value = '';
+    cursoTags.value = '';
+    cursoNivel.value = 'Iniciante';
+    cursoLink.value = '';
+    thumbFile.value = '';
+    thumbUrl.value = '';
+    thumbPreview.innerHTML = '';
+    modulesTemp = [];
+    renderModules();
+    localStorage.removeItem('apm_autosave');
+  }
+
+  // ---------- PUBLISHED PREVIEW (visual only) ----------
+  async function loadPublishedPreview(){
+    publishedList.innerHTML = '';
+    noPublished.style.display = 'none';
+    try {
+      const snap = await db.ref('cursos').orderByChild('createdAt').limitToLast(30).once('value');
+      const arr = [];
+      snap.forEach(child => {
+        const c = child.val(); c._id = child.key;
+        arr.push(c);
+      });
+      arr.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+      publishedCache = arr;
+      if (!arr.length) return noPublished.style.display = 'block';
+      arr.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'course-card';
+        card.innerHTML = `
+          <div class="thumb">${c.thumbnailUrl ? `<img src="${c.thumbnailUrl}" alt="${escapeHtml(c.nome)}">` : '<div style="padding:14px;color:var(--muted)">Sem imagem</div>'}</div>
+          <div style="font-weight:800">${escapeHtml(c.nome)}</div>
+          <div class="muted small">${escapeHtml(truncate(c.descricao,160))}</div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <div class="muted small">${c.nivel || ''}</div>
+            <div style="margin-left:auto;color:var(--muted);font-size:13px">${new Date(c.createdAt||0).toLocaleString()}</div>
+          </div>
+        `;
+        publishedList.appendChild(card);
+      });
+    } catch(e){
+      console.warn('load preview err', e);
+      noPublished.style.display = 'block';
+    }
+  }
+
+  // ---------- RETRY QUEUE PROCESSOR (basic) ----------
+  async function processUploadQueue(){
+    if (!uploadQueue.length) return;
+    // Attempt to re-publish queued items (very basic logic)
+    const item = uploadQueue.shift();
+    try {
+      toast('Reenviando item da fila...');
+      // naive reattempt: push course title only as backup (not restoring all data)
+      const ref = db.ref('cursos').push();
+      await ref.set({ nome: item.curso.nome || 'Curso (fila)', descricao: item.curso.descricao || '', createdAt: Date.now(), author: 'fila' });
+      toast('Item da fila publicado (backup)');
+    } catch(e){
+      console.warn('retry err', e);
+      uploadQueue.push(item); // requeue
+    }
+  }
+  // keep trying retry queue every 30s
+  setInterval(processUploadQueue, 30000);
+
+  // ---------- HELPERS ----------
+  function truncate(s, n=140){ if(!s) return ''; return s.length > n ? s.slice(0,n-1) + '…' : s; }
+
+  // autosave every 5s while user types (debounced)
+  const autoSaveDebounced = debounce(autosaveLocal, 800);
+  [cursoNome, cursoDescricao, cursoTags, cursoLink].forEach(el => el.addEventListener('input', autoSaveDebounced));
+
+  // show local autosave on load
+  window.addEventListener('load', ()=> {
+    loadAutosave();
+    loadPublishedPreview();
+  });
+
+  // Add module button
+  btnAddModule.addEventListener('click', ()=> {
+    createBlankModule();
+  });
+
+  // Refresh preview
+  btnRefresh.addEventListener('click', ()=> {
+    loadPublishedPreview();
+    toast('Atualizando lista');
+  });
+
+  // My courses filter (simple client filter by "author" placeholder)
+  btnMyCourses.addEventListener('click', ()=> {
+    // we don't have real auth when libre publishing; this button will just filter by "anônimo"
+    const mine = publishedCache.filter(c => (c.author||'').includes('anônimo'));
+    if (!mine.length) return toast('Nenhum curso criado como anônimo encontrado');
+    publishedList.innerHTML = '';
+    mine.forEach(c => {
+      const card = document.createElement('div'); card.className='course-card';
+      card.innerHTML = `<div class="thumb">${c.thumbnailUrl ? `<img src="${c.thumbnailUrl}">` : '<div style="padding:14px;color:var(--muted)">Sem imagem</div>'}</div><div style="font-weight:800">${escapeHtml(c.nome)}</div><div class="muted small">${escapeHtml(truncate(c.descricao,160))}</div>`;
+      publishedList.appendChild(card);
+    });
+    toast('Filtrado: Meus cursos (anônimos)');
+  });
+
+  // small UX: pressing Ctrl+S saves the course (publish)
+  window.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      btnPublish.click();
+    }
+  });
+
+  // ---------- EXTRAS: expose debug
+  window._apm = {
+    modulesTemp, uploadQueue, loadPublishedPreview, autosaveLocal, clearAll
+  };
+
+  </script>
 </body>
 </html>
